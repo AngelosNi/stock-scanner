@@ -44,14 +44,14 @@ public class OhlcBarsAvgVolumeEnhancer implements OhlcBarEnhanceable {
         List<OhlcPlusBar> barsCopy = new ArrayList<>(bars);
         barsCopy.stream()
                 .filter(bar -> bar.getTime().isAfter(dateTimeUtils.getNowDay()))    // Get today's bars
-                .forEach(bar -> bar.setDaysAverageVolume(calculateAvgsFromPreviousDays(bars, bar)));
+                .forEach(bar -> bar.setAverageVolumeAcrossDays(calculateAvgsFromPreviousDays(bars, bar)));
 
         return barsCopy;
     }
 
     private double calculateAvgsFromPreviousDays(List<OhlcPlusBar> bars, OhlcBar forBar) {
         return bars.stream()
-                .filter(bar -> bar.getTime().isAfter(dateTimeUtils.getNowDay().minusDays(OhlcBarsAvgVolumeEnhancer.DAYS_TO_INCLUDE_FOR_5_MIN_AVG))) // Only include N previous days for average calculations
+                .filter(bar -> bar.getTime().isAfter(dateTimeUtils.subtractDaysSkippingWeekends(dateTimeUtils.getNowDay(), OhlcBarsAvgVolumeEnhancer.DAYS_TO_INCLUDE_FOR_5_MIN_AVG))) // Only include N previous days for average calculations
                 .filter(bar -> bar.getTime().toLocalTime().equals(forBar.getTime().toLocalTime()))      // Only include the specific time of "forBar" from the days included
                 .map(OhlcPlusBar::getRaAverageVolume)
                 .mapToDouble(a -> a)

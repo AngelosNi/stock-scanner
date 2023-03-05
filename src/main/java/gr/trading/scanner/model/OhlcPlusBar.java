@@ -7,7 +7,7 @@ public class OhlcPlusBar extends OhlcBar {
 
     private Double raAverageVolume;
 
-    private Double daysAverageVolume;
+    private Double averageVolumeAcrossDays;
 
     public OhlcPlusBar(OhlcBar ohlcBar) {
         this.setClose(ohlcBar.getClose());

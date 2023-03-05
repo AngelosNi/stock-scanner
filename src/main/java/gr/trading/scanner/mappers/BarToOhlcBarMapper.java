@@ -32,8 +32,8 @@ public class BarToOhlcBarMapper {
             time = LocalDateTime.parse(bar.time(), formatter);
         }
 
+        // Fix wrong timezone returned from provider
         ohlcBar.setTime(time);
-
         return ohlcBar;
     }
 }

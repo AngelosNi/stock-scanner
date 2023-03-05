@@ -32,7 +32,7 @@ public class RvolFactorCriteria implements OhlcPlusBarCriteria {
 
     public double getCloseOfPreviousDay(List<OhlcPlusBar> d1Bars) {
         return d1Bars.stream()
-                .filter(bar -> bar.getTime().isAfter(dateTimeUtils.getNowDay().minusDays(1)))
+                .filter(bar -> bar.getTime().isAfter(dateTimeUtils.subtractDaysSkippingWeekends(dateTimeUtils.getNowDay(), 1)))
                 .collect(Collectors.toList())
                 .get(0)
                 .getClose();

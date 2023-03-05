@@ -3,8 +3,6 @@ package gr.trading.scanner.configuration;
 import com.ib.client.EClientSocket;
 import com.ib.client.EJavaSignal;
 import com.ib.client.EReader;
-import gr.trading.scanner.repositories.SymbolsRepository;
-import gr.trading.scanner.repositories.TwsSymbolsRepository;
 import gr.trading.scanner.services.tws.TwsMessageHandler;
 import gr.trading.scanner.services.tws.TwsMessageListener;
 import jakarta.annotation.PostConstruct;
@@ -12,17 +10,16 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableAsync;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Configuration
 @Slf4j
 public class TwsConfig {
 
-    private Map<Integer, TwsMessageHandler.SyncedBarsList> histDataByReqId = new HashMap<>();
+    private Map<Integer, TwsMessageHandler.SyncedBarsList> histDataByReqId = new ConcurrentHashMap<>();
 
     @Bean
     public EJavaSignal eJavaSignal() {

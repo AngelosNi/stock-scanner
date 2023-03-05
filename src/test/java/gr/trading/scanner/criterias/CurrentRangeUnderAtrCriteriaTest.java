@@ -3,14 +3,13 @@ package gr.trading.scanner.criterias;
 import gr.trading.scanner.model.OhlcBar;
 import gr.trading.scanner.model.OhlcPlusBar;
 import gr.trading.scanner.ta.TaTools;
+import gr.trading.scanner.utitlities.DateTimeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,7 +60,7 @@ class CurrentRangeUnderAtrCriteriaTest {
 
     @BeforeEach
     void setup() {
-        criteria = new CurrentRangeUnderAtrCriteria(new TaTools());
+        criteria = new CurrentRangeUnderAtrCriteria(new TaTools(), new DateTimeUtils());
     }
 
     @Test

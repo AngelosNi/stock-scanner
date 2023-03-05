@@ -2,6 +2,7 @@ package gr.trading.scanner.enhancers;
 
 import gr.trading.scanner.model.OhlcBar;
 import gr.trading.scanner.model.OhlcPlusBar;
+import gr.trading.scanner.utitlities.DateTimeUtils;
 import gr.trading.scanner.utitlities.MathUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 
 class OhlcBarsAvgVolumeEnhancerTest {
 
-    private OhlcBarsAvgVolumeEnhancer enhancer = new OhlcBarsAvgVolumeEnhancer(new MathUtils());
+    private OhlcBarsAvgVolumeEnhancer enhancer = new OhlcBarsAvgVolumeEnhancer(new MathUtils(), new DateTimeUtils());
 
     LocalDateTime start = LocalDate.now().atTime(9, 35);
 
