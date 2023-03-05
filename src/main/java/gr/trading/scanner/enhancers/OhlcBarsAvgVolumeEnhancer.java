@@ -2,6 +2,7 @@ package gr.trading.scanner.enhancers;
 
 import gr.trading.scanner.model.OhlcBar;
 import gr.trading.scanner.model.OhlcPlusBar;
+import gr.trading.scanner.utitlities.DateTimeUtils;
 import gr.trading.scanner.utitlities.MathUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,9 @@ public class OhlcBarsAvgVolumeEnhancer implements OhlcBarEnhanceable {
 
     private static final int DAYS_TO_INCLUDE_FOR_5_MIN_AVG = 2;
 
-    private MathUtils mathUtils;
+    private final MathUtils mathUtils;
+
+    private final DateTimeUtils dateTimeUtils;
 
     @Override
     public List<OhlcPlusBar> enhance(List<OhlcPlusBar> bars) {
@@ -40,7 +43,7 @@ public class OhlcBarsAvgVolumeEnhancer implements OhlcBarEnhanceable {
     private List<OhlcPlusBar> enhanceWithDaysAverageVolume(List<OhlcPlusBar> bars) {
         List<OhlcPlusBar> barsCopy = new ArrayList<>(bars);
         barsCopy.stream()
-                .filter(bar -> bar.getTime().isAfter(LocalDate.now().atStartOfDay()))    // Get today's bars
+                .filter(bar -> bar.getTime().isAfter(dateTimeUtils.getNowDay()))    // Get today's bars
                 .forEach(bar -> bar.setDaysAverageVolume(calculateAvgsFromPreviousDays(bars, bar)));
 
         return barsCopy;
@@ -48,7 +51,7 @@ public class OhlcBarsAvgVolumeEnhancer implements OhlcBarEnhanceable {
 
     private double calculateAvgsFromPreviousDays(List<OhlcPlusBar> bars, OhlcBar forBar) {
         return bars.stream()
-                .filter(bar -> bar.getTime().isAfter(LocalDate.now().atStartOfDay().minusDays(OhlcBarsAvgVolumeEnhancer.DAYS_TO_INCLUDE_FOR_5_MIN_AVG))) // Only include N previous days for average calculations
+                .filter(bar -> bar.getTime().isAfter(dateTimeUtils.getNowDay().minusDays(OhlcBarsAvgVolumeEnhancer.DAYS_TO_INCLUDE_FOR_5_MIN_AVG))) // Only include N previous days for average calculations
                 .filter(bar -> bar.getTime().toLocalTime().equals(forBar.getTime().toLocalTime()))      // Only include the specific time of "forBar" from the days included
                 .map(OhlcPlusBar::getRaAverageVolume)
                 .mapToDouble(a -> a)

@@ -33,7 +33,7 @@ public class TwsSymbolsRepository implements SymbolsRepository<OhlcBar> {
         contract.exchange("SMART");
 
         try {
-            List<Bar> bars = twsMessageHandler.reqHistoricalData(contract, end.format(DateTimeFormatter.ofPattern("yyyyMMd-HH:mm:ss")), "10 D", interval.getTwsInterval());
+            List<Bar> bars = twsMessageHandler.reqHistoricalData(contract, end.format(DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss")), "10 D", interval.getTwsInterval());
             return bars.stream()
                     .map(barToOhlcBarMapper::map)
                     .collect(Collectors.toList());

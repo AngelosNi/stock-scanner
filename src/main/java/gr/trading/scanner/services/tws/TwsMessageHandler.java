@@ -16,7 +16,7 @@ public class TwsMessageHandler {
 
     private EJavaSignal signal;
 
-    private AtomicInteger idx = new AtomicInteger();
+    private AtomicInteger idx = new AtomicInteger(0);
 
     private Map<Integer, SyncedBarsList> histDataByReqId;
 
@@ -28,13 +28,14 @@ public class TwsMessageHandler {
     }
 
     public List<Bar> reqHistoricalData(Contract contract, String endDateTime, String duration, String interval) throws InterruptedException {
-        Integer reqIdx = idx.getAndIncrement();
+        int reqIdx = idx.getAndIncrement();
         initializeHistDataWithIdx(reqIdx);
         client.reqHistoricalData(reqIdx, contract, endDateTime, duration, interval, "TRADES", 0, 1, false, List.of());
 
         synchronized (histDataByReqId.get(reqIdx).getMutex()) {
             histDataByReqId.get(reqIdx).getMutex().wait();
         }
+
 
         return histDataByReqId.get(reqIdx).getBars();
     }

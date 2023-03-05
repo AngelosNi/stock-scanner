@@ -35,4 +35,9 @@ public class SymbolHandler {
         }
         return CompletableFuture.completedFuture(plusBars);
     }
+
+    @Async
+    public Future<List<OhlcBar>> findOhlcBars(String symbol, LocalDateTime start, LocalDateTime end, Interval interval) {
+        return CompletableFuture.completedFuture(repository.findStockBySymbolAndDates(symbol, start, end, interval));
+    }
 }
