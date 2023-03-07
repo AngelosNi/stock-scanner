@@ -2,6 +2,7 @@ package gr.trading.scanner.controllers;
 
 import gr.trading.scanner.model.Interval;
 import gr.trading.scanner.model.OhlcPlusBar;
+import gr.trading.scanner.repositories.TickersRepository;
 import gr.trading.scanner.services.ParallelSymbolHandler;
 import gr.trading.scanner.utitlities.DateTimeUtils;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -23,13 +25,15 @@ public class StockDataController {
 
     private final DateTimeUtils dateTimeUtils;
 
+    private final TickersRepository tickersRepository;
+
     @GetMapping("/stock")
-    public List getSymbols() throws ExecutionException, InterruptedException {
+    public List getSymbols() throws ExecutionException, InterruptedException, IOException {
         long startTime = System.nanoTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate start = LocalDate.parse("2023-02-20", formatter);
 
-        List<String> symbols = List.of("AAPL", "C", "UPS", "JPM", "PSX", "BX", "LIN", "AON", "EPAM", "ENPH", "CARR");
+        List<String> symbols = tickersRepository.findAll();
 
         List<OhlcPlusBar> bars = symbolHandler.findAndEnhanceOhlcBarsForSymbols(symbols, start.atStartOfDay(), dateTimeUtils.getNowDayTime(), Interval.M5);
 

@@ -253,10 +253,10 @@ public class TwsMessageListener implements EWrapper {
 
     @Override
     public void error(int i, int i1, String s, String s1) {
-        log.error(s + s1);
-        if (histDataByReqId.get(i) == null) {
-            return;
-        }
+        log.error(s + " " + s1);
+//        if (histDataByReqId.get(i) == null) {
+//            return;
+//        }
         Object mutex = histDataByReqId.get(i).getMutex();
         synchronized (mutex) {
             mutex.notify();
@@ -320,9 +320,9 @@ public class TwsMessageListener implements EWrapper {
 
     @Override
     public void historicalDataEnd(int i, String s, String s1) {
-        if (histDataByReqId.get(i) == null) {
-            return;
-        }
+//        if (histDataByReqId.get(i) == null) {
+//            return;
+//        }
         Object mutex = histDataByReqId.get(i).getMutex();
         synchronized (mutex) {
             mutex.notify();
