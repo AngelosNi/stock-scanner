@@ -4,7 +4,7 @@ import gr.trading.scanner.enhancers.OhlcBarEnhanceable;
 import gr.trading.scanner.model.Interval;
 import gr.trading.scanner.model.OhlcBar;
 import gr.trading.scanner.model.OhlcPlusBar;
-import gr.trading.scanner.repositories.SymbolsRepository;
+import gr.trading.scanner.repositories.stockdata.StockDataRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SymbolHandler {
 
-    private SymbolsRepository<OhlcBar> repository;
+    private StockDataRepository<OhlcBar> repository;
 
     private List<OhlcBarEnhanceable> ohlcBarEnhancers;
 

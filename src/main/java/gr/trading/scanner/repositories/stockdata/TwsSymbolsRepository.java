@@ -1,4 +1,4 @@
-package gr.trading.scanner.repositories;
+package gr.trading.scanner.repositories.stockdata;
 
 import com.ib.client.Bar;
 import com.ib.client.Contract;
@@ -8,17 +8,17 @@ import gr.trading.scanner.model.OhlcBar;
 import gr.trading.scanner.services.tws.TwsMessageHandler;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+//@Component
 @Slf4j
 @AllArgsConstructor
-public class TwsSymbolsRepository implements SymbolsRepository<OhlcBar> {
+public class TwsSymbolsRepository implements StockDataRepository<OhlcBar> {
 
     private TwsMessageHandler twsMessageHandler;
 
@@ -41,5 +41,10 @@ public class TwsSymbolsRepository implements SymbolsRepository<OhlcBar> {
             e.printStackTrace();
             throw new RuntimeException("Error Retrieving data.");
         }
+    }
+
+    @Override
+    public List<OhlcBar> findMultipleStocksBySymbolsAndDates(List<String> symbols, LocalDateTime start, LocalDateTime end, Interval interval) {
+        throw new NotImplementedException();
     }
 }

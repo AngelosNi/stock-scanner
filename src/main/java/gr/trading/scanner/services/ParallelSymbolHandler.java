@@ -22,7 +22,7 @@ public class ParallelSymbolHandler {
     private final DateTimeUtils dateTimeUtils;
 
     public List<OhlcPlusBar> findAndEnhanceOhlcBarsForSymbols(List<String> symbols, LocalDateTime start, LocalDateTime end, Interval interval) throws ExecutionException, InterruptedException {
-
+Thread.sleep(10000);
         List<Future<List<OhlcPlusBar>>> tasks = new ArrayList<>();
         List<Future<List<OhlcBar>>> dailyTasks = new ArrayList<>();
         for (String symbol : symbols) {

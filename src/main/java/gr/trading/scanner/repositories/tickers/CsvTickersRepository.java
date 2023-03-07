@@ -1,4 +1,4 @@
-package gr.trading.scanner.repositories;
+package gr.trading.scanner.repositories.tickers;
 
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;

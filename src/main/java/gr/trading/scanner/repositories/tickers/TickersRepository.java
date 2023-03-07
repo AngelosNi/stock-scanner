@@ -1,4 +1,4 @@
-package gr.trading.scanner.repositories;
+package gr.trading.scanner.repositories.tickers;
 
 import java.io.IOException;
 import java.util.List;

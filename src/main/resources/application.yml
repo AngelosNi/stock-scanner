@@ -1,0 +1,6 @@
+spring:
+  codec:
+    max-in-memory-size: 50MB
+
+twelve-data:
+  base-url: https://api.twelvedata.com

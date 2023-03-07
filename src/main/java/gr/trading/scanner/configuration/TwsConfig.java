@@ -9,13 +9,12 @@ import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-@Configuration
+//@Configuration
 @Slf4j
 public class TwsConfig {
 
@@ -52,7 +51,7 @@ public class TwsConfig {
         return new TwsMessageHandler(eClientSocket, eReader, eJavaSignal, histDataByReqId);
     }
 
-    @Configuration
+//    @Configuration
     @AllArgsConstructor
     public static class TwsMessageProcessorConfig {
 

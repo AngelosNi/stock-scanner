@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 public class DateTimeUtils {
 
     public LocalDateTime getNowDay() {
-        return LocalDate.now().minusDays(5).atStartOfDay();
+        return LocalDate.now().atStartOfDay();
     }
 
     public LocalDateTime getNowDayTime() {
-        return LocalDateTime.now().minusDays(5);
+        return LocalDateTime.now();
     }
 
     public LocalDateTime addDaysSkippingWeekends(LocalDateTime date, int days) {
