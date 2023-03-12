@@ -3,7 +3,7 @@ package gr.trading.scanner.controllers;
 import gr.trading.scanner.model.Interval;
 import gr.trading.scanner.model.OhlcPlusBar;
 import gr.trading.scanner.repositories.tickers.TickersRepository;
-import gr.trading.scanner.services.ParallelSymbolHandler;
+import gr.trading.scanner.services.SymbolHandlerExecutor;
 import gr.trading.scanner.utitlities.DateTimeUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 public class StockDataController {
 
-    private final ParallelSymbolHandler symbolHandler;
+    private final SymbolHandlerExecutor symbolHandler;
 
     private final DateTimeUtils dateTimeUtils;
 
@@ -35,7 +35,8 @@ public class StockDataController {
 
         List<String> symbols = tickersRepository.findAll();
 
-        List<OhlcPlusBar> bars = symbolHandler.findAndEnhanceOhlcBarsForSymbols(symbols, LocalDate.now().minusDays(10).atTime(9, 30), dateTimeUtils.getNowDayTime().minusHours(7), Interval.M5);
+
+        List<OhlcPlusBar> bars = symbolHandler.findAndEnhanceOhlcBarsRateLimited(symbols, LocalDate.now().minusDays(10).atTime(9, 30), dateTimeUtils.getNowDayTime().minusHours(7), Interval.M5);
 
         long elapsedTime = System.nanoTime() - startTime;
         log.info("Time elapsed (ms): {}", elapsedTime / 1000000);

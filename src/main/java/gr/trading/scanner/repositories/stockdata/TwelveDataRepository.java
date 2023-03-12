@@ -27,6 +27,7 @@ public class TwelveDataRepository implements StockDataRepository<OhlcBar> {
         try {
             return client.getStocksMarketData(List.of(symbol), start, end, interval.getTwelveDataInterval())
                     .getValues().stream()
+                    .peek(v -> log.info(v.toString()))
                     .map(mapper::map)
                     .collect(Collectors.toList());
         } catch (ExecutionException | InterruptedException e) {
