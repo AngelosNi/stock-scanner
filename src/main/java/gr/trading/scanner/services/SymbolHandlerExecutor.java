@@ -49,7 +49,7 @@ public class SymbolHandlerExecutor {
 
     public List<OhlcPlusBar> findAndEnhanceOhlcBarsRateLimited(List<String> symbols, LocalDateTime start, LocalDateTime end, Interval interval) throws ExecutionException, InterruptedException {
 
-        RateLimiter rateLimiter = RateLimiter.create(0.1);
+        RateLimiter rateLimiter = RateLimiter.create(0.6);
         return symbols.stream()
                 .map(sym -> {
                     rateLimiter.acquire();

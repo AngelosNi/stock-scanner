@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class DateTimeUtils {
@@ -15,6 +17,15 @@ public class DateTimeUtils {
 
     public LocalDateTime getNowDayTime() {
         return LocalDateTime.now();
+    }
+
+    public List<LocalDate> getInBetweenDates(LocalDate start, LocalDate end) {
+        List<LocalDate> inBetweenDates = new ArrayList<>();
+        for (LocalDate date = start; date.isBefore(end); date = addDaysSkippingWeekends(date.atStartOfDay(), 1).toLocalDate()) {
+            inBetweenDates.add(date);
+        }
+
+        return inBetweenDates;
     }
 
     public LocalDateTime addDaysSkippingWeekends(LocalDateTime date, int days) {

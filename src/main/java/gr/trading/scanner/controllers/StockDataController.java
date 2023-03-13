@@ -36,7 +36,7 @@ public class StockDataController {
         List<String> symbols = tickersRepository.findAll();
 
 
-        List<OhlcPlusBar> bars = symbolHandler.findAndEnhanceOhlcBarsRateLimited(symbols, LocalDate.now().minusDays(10).atTime(9, 30), dateTimeUtils.getNowDayTime().minusHours(7), Interval.M5);
+        List<OhlcPlusBar> bars = symbolHandler.findAndEnhanceOhlcBarsRateLimited(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 10), dateTimeUtils.getNowDayTime().minusHours(7), Interval.M5);
 
         long elapsedTime = System.nanoTime() - startTime;
         log.info("Time elapsed (ms): {}", elapsedTime / 1000000);

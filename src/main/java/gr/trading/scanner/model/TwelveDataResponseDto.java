@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ public class TwelveDataResponseDto {
     @JsonAnySetter
     private Map<String, String> meta;
 
-    private List<Bar> values;
+    private List<Bar> values = new ArrayList<>();
 
     private String status;
 

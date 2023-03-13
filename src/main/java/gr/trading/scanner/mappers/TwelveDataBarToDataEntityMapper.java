@@ -1,7 +1,7 @@
 package gr.trading.scanner.mappers;
 
-import gr.trading.scanner.model.OhlcBar;
 import gr.trading.scanner.model.TwelveDataResponseDto;
+import gr.trading.scanner.model.entities.DailyDataEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -11,16 +11,16 @@ import java.time.format.DateTimeFormatter;
 
 @Component
 @Slf4j
-public class TwelveDataBarToOhlcBarMapper {
+public class TwelveDataBarToDataEntityMapper {
 
-    public OhlcBar map(TwelveDataResponseDto.Bar bar) {
-        OhlcBar ohlcBar = new OhlcBar();
+    public DailyDataEntity map(TwelveDataResponseDto.Bar bar, String symbol) {
+        DailyDataEntity entity = new DailyDataEntity();
 
-        ohlcBar.setClose(bar.getClose().doubleValue());
-        ohlcBar.setHigh(bar.getHigh().doubleValue());
-        ohlcBar.setOpen(bar.getOpen().doubleValue());
-        ohlcBar.setLow(bar.getLow().doubleValue());
-        ohlcBar.setVolume(bar.getVolume());
+        entity.setClosePrice(bar.getClose().doubleValue());
+        entity.setHighPrice(bar.getHigh().doubleValue());
+        entity.setOpenPrice(bar.getOpen().doubleValue());
+        entity.setLowPrice(bar.getLow().doubleValue());
+        entity.setVolume(bar.getVolume());
 
         DateTimeFormatter formatter;
         LocalDateTime time;
@@ -32,8 +32,8 @@ public class TwelveDataBarToOhlcBarMapper {
             time = LocalDateTime.parse(bar.getDateTime(), formatter);
         }
 
-        ohlcBar.setTime(time);
+        entity.setSymbolDateId(new DailyDataEntity.SymbolDateId(symbol, time.toLocalDate()));
 
-        return ohlcBar;
+        return entity;
     }
 }
