@@ -1,7 +1,5 @@
 package gr.trading.scanner.controllers;
 
-import gr.trading.scanner.model.Interval;
-import gr.trading.scanner.model.OhlcPlusBar;
 import gr.trading.scanner.repositories.tickers.TickersRepository;
 import gr.trading.scanner.services.SymbolHandlerExecutor;
 import gr.trading.scanner.utitlities.DateTimeUtils;
@@ -36,11 +34,11 @@ public class StockDataController {
         List<String> symbols = tickersRepository.findAll();
 
 
-        List<OhlcPlusBar> bars = symbolHandler.findAndEnhanceOhlcBarsRateLimited(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 10), dateTimeUtils.getNowDayTime().minusHours(7), Interval.M5);
+        List<String> filteredSymbols = symbolHandler.findSymbolsByCriterias(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 10), dateTimeUtils.getNowDayTime().minusHours(7));
 
         long elapsedTime = System.nanoTime() - startTime;
         log.info("Time elapsed (ms): {}", elapsedTime / 1000000);
 
-        return bars;
+        return filteredSymbols;
     }
 }

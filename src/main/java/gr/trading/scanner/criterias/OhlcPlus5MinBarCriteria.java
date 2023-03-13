@@ -4,7 +4,7 @@ import gr.trading.scanner.model.OhlcPlusBar;
 
 import java.util.List;
 
-public interface OhlcPlusBarCriteria {
+public interface OhlcPlus5MinBarCriteria {
 
     boolean apply(List<OhlcPlusBar> d1Bars, List<OhlcPlusBar> min5Bars) throws NoRecentDataException;
 

@@ -13,7 +13,7 @@ import static java.lang.Math.abs;
 
 @Component
 @AllArgsConstructor
-public class CurrentRangeUnderAtrCriteria implements OhlcPlusBarCriteria {
+public class CurrentRangeUnderAtrCriteria5Min implements OhlcPlus5MinBarCriteria {
 
     private final TaTools taTools;
 

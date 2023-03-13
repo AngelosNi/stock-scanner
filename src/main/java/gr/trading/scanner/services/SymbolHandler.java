@@ -1,5 +1,6 @@
 package gr.trading.scanner.services;
 
+import gr.trading.scanner.criterias.OhlcPlus1DayBarCriteria;
 import gr.trading.scanner.enhancers.OhlcBarEnhanceable;
 import gr.trading.scanner.model.Interval;
 import gr.trading.scanner.model.OhlcBar;
@@ -20,8 +21,10 @@ public class SymbolHandler {
 
     private List<OhlcBarEnhanceable> ohlcBarEnhancers;
 
-    public List<OhlcPlusBar> findAndEnhanceOhlcBars(String symbol, LocalDateTime start, LocalDateTime end, Interval interval) {
-        List<OhlcBar> bars = repository.findStockBySymbolAndDates(symbol, start, end, interval);
+    private List<OhlcPlus1DayBarCriteria> ohlcPlus1DayBarCriteria;
+
+    public List<OhlcPlusBar> findAndEnhanceDailyBars(String symbol, LocalDateTime start, LocalDateTime end) {
+        List<OhlcBar> bars = repository.findStockBySymbolAndDates(symbol, start, end, Interval.D1);
 
         List<OhlcPlusBar> plusBars = bars.stream()
                 .map(OhlcPlusBar::new)
@@ -29,10 +32,25 @@ public class SymbolHandler {
         for (OhlcBarEnhanceable enhancer : ohlcBarEnhancers) {
             plusBars = enhancer.enhance(plusBars);
         }
-        return plusBars;
+        return plusBars.stream()
+                .sorted((b1, b2) -> {
+                    if (b1.getTime().isAfter(b2.getTime())) {
+                        return 1;
+                    } else if (b1.getTime().isBefore(b2.getTime())) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
-    public List<OhlcBar> findOhlcBars(String symbol, LocalDateTime start, LocalDateTime end, Interval interval) {
-        return repository.findStockBySymbolAndDates(symbol, start, end, interval);
+    public boolean dailyCriteriasApply(List<OhlcPlusBar> plusBars) {
+        for (OhlcPlus1DayBarCriteria criteria : ohlcPlus1DayBarCriteria) {
+            if (!criteria.apply(plusBars)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

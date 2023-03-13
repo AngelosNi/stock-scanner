@@ -13,7 +13,7 @@ import static java.lang.Math.abs;
 
 @Component
 @AllArgsConstructor
-public class RvolFactorCriteria implements OhlcPlusBarCriteria {
+public class RvolFactorCriteria5Min implements OhlcPlus5MinBarCriteria {
 
     private final TaTools taTools;
 

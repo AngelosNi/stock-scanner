@@ -27,7 +27,7 @@ class CurrentRangeUnderAtrCriteriaTest {
     private DateTimeUtils dateTimeUtils;
 
     @InjectMocks
-    private CurrentRangeUnderAtrCriteria criteria;
+    private CurrentRangeUnderAtrCriteria5Min criteria;
 
     private OhlcBar beforeYesterdayOhlcBar = OhlcBar.builder()
             .close(52.1123)
@@ -68,7 +68,7 @@ class CurrentRangeUnderAtrCriteriaTest {
     }
 
 //    @Test
-    void applyTestSuccess() throws OhlcPlusBarCriteria.NoRecentDataException {
+    void applyTestSuccess() throws OhlcPlus5MinBarCriteria.NoRecentDataException {
         List<OhlcPlusBar> d1Bars = List.of(new OhlcPlusBar(beforeYesterdayOhlcBar), new OhlcPlusBar(yesterdayOhlcBar), new OhlcPlusBar(todayOhlcBar));
         List<OhlcPlusBar> m5Bars = List.of(new OhlcPlusBar(last5mOhlcBar));
 
@@ -78,7 +78,7 @@ class CurrentRangeUnderAtrCriteriaTest {
     }
 
 //    @Test
-    void applyTestFail() throws OhlcPlusBarCriteria.NoRecentDataException {
+    void applyTestFail() throws OhlcPlus5MinBarCriteria.NoRecentDataException {
         List<OhlcPlusBar> d1Bars = List.of(new OhlcPlusBar(beforeYesterdayOhlcBar), new OhlcPlusBar(yesterdayOhlcBar), new OhlcPlusBar(todayOhlcBar));
         List<OhlcPlusBar> m5Bars = List.of(new OhlcPlusBar(last5mOhlcBar));
 
