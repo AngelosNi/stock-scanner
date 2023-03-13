@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -19,22 +20,21 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 public class StockDataController {
 
-    private final SymbolHandlerExecutor symbolHandler;
+    private final SymbolHandlerExecutor symbolHandlerExecutor;
 
     private final DateTimeUtils dateTimeUtils;
 
     private final TickersRepository tickersRepository;
 
     @GetMapping("/stock")
-    public List getSymbols() throws ExecutionException, InterruptedException, IOException {
+    public Map<String, List<String>> getSymbols() throws ExecutionException, InterruptedException, IOException {
         long startTime = System.nanoTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate start = LocalDate.parse("2023-02-20", formatter);
 
         List<String> symbols = tickersRepository.findAll();
 
-
-        List<String> filteredSymbols = symbolHandler.findSymbolsByCriterias(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 10), dateTimeUtils.getNowDayTime().minusHours(7));
+        Map<String, List<String>> filteredSymbols = symbolHandlerExecutor.findSymbolsByCriterias(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 10), dateTimeUtils.getNowDayTime().minusHours(7));
 
         long elapsedTime = System.nanoTime() - startTime;
         log.info("Time elapsed (ms): {}", elapsedTime / 1000000);

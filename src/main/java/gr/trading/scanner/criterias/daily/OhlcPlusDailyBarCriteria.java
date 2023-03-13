@@ -1,4 +1,4 @@
-package gr.trading.scanner.criterias;
+package gr.trading.scanner.criterias.daily;
 
 import gr.trading.scanner.model.OhlcPlusBar;
 

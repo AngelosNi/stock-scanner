@@ -1,17 +1,16 @@
-package gr.trading.scanner.criterias;
+package gr.trading.scanner.criterias.daily;
 
 import gr.trading.scanner.model.OhlcBar;
 import gr.trading.scanner.model.OhlcPlusBar;
 import gr.trading.scanner.ta.TaTools;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.max;
 
-@Component
 @AllArgsConstructor
 public class HADailyBarsTrendingCriteria implements OhlcPlusDailyBarCriteria {
 
@@ -19,10 +18,10 @@ public class HADailyBarsTrendingCriteria implements OhlcPlusDailyBarCriteria {
 
     private final TaTools taTools;
 
-    @Override
+    private final Predicate<OhlcBar> isTrendingCriteria;
+
     public boolean apply(List<OhlcPlusBar> d1Bars) {
-        boolean isBullish = true;
-        boolean isBearish = true;
+        boolean isTrending = true;
 
         List<OhlcBar> bars = d1Bars.stream()
                 .map(b -> (OhlcBar) b)
@@ -31,13 +30,11 @@ public class HADailyBarsTrendingCriteria implements OhlcPlusDailyBarCriteria {
         List<OhlcBar> haBars = taTools.convertToHeikinAshi(bars);
 
         for (int i = haBars.size() - 1; i > max(haBars.size() - 1 - LOOK_BEHIND_PERIOD, 0) ; i--) {
-            if (haBars.get(i).getClose() < haBars.get(i).getOpen()) {
-                isBullish = false;
-            } else {
-                isBearish = false;
+            if (!isTrendingCriteria.test(haBars.get(i))) {
+                isTrending = false;
             }
         }
 
-        return isBullish || isBearish;
+        return isTrending;
     }
 }

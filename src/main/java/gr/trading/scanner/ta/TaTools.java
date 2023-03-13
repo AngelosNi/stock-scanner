@@ -54,26 +54,4 @@ public class TaTools {
 
         return haBars;
     }
-
-//    public <T extends OhlcBar>  List<HashMap<String, Double>> convertToHeikinAshi(List<T> ohlcBars) {
-//        List<OhlcBar> heikinAshiBars = new ArrayList<>();
-//        OhlcBar firstBar = ohlcBars.get(0);
-//        OhlcBar heikinAshiFirstBar = new OhlcBar();
-//        heikinAshiFirstBar.setOpen(firstBar.get("open") + firstBar.getClose()) / 2;
-//        heikinAshiFirstBar.setHigh(firstBar.getHigh());
-//        heikinAshiFirstBar.setLow(firstBar.getLow());
-//        heikinAshiFirstBar.setClose((firstBar.getOpen() + firstBar.getHigh() + firstBar.getLow() + firstBar.getClose()) / 4);
-//        heikinAshiBars.add(heikinAshiFirstBar);
-//        for (int i = 1; i < ohlcBars.size(); i++) {
-//            HashMap<String, Double> bar = ohlcBars.get(i);
-//            HashMap<String, Double> prevBar = heikinAshiBars.get(i-1);
-//            HashMap<String, Double> heikinAshiBar = new HashMap<String, Double>();
-//            heikinAshiBar.put("open", (prevBar.get("open") + prevBar.get("close")) / 2);
-//            heikinAshiBar.put("high", Math.max(Math.max(bar.get("high"), prevBar.get("open")), prevBar.get("close")));
-//            heikinAshiBar.put("low", Math.min(Math.min(bar.get("low"), prevBar.get("open")), prevBar.get("close")));
-//            heikinAshiBar.put("close", (bar.get("open") + bar.get("high") + bar.get("low") + bar.get("close")) / 4);
-//            heikinAshiBars.add(heikinAshiBar);
-//        }
-//        return heikinAshiBars;
-//    }
 }

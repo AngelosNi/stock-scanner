@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,19 +43,34 @@ public class SymbolHandlerExecutor {
 //        return bars;
 //    }
 
-    public List<String> findSymbolsByCriterias(List<String> symbols, LocalDateTime start, LocalDateTime end) throws ExecutionException, InterruptedException {
-        return symbols.stream()
-                .filter(sym -> {
-                        List<OhlcPlusBar> bars = symbolHandler.findAndEnhanceDailyBars(sym, start, dateTimeUtils.getNowDay());
-                        if (bars.isEmpty()) {
-                            log.error("{} is empty", sym);
-                            return false;
-                        }
-                        return symbolHandler.dailyCriteriasApply(bars);
+    public Map<String, List<String>> findSymbolsByCriterias(List<String> symbols, LocalDateTime start, LocalDateTime end) {
+        List<SymbolData> filteredDailySymbols = symbols.stream()
+                .map(sym -> new SymbolData(sym, symbolHandler.findAndEnhanceDailyBars(sym, start, dateTimeUtils.getNowDay())))
+                .filter(symbolData -> {
+                    if (symbolData.bars().isEmpty()) {
+                        log.error("{} is empty", symbolData);
+                        return false;
+                    }
+                    return true;
                 })
+                .filter(symbolData -> symbolHandler.dailyCriteriaApply(symbolData.bars()))
                 .collect(Collectors.toList());
+
+        List<String> bullishDailySymbols = filteredDailySymbols.stream()
+                .filter(symbolData -> symbolHandler.dailyBullishCriteriaApply(symbolData.bars()))
+                .map(SymbolData::name)
+                .collect(Collectors.toList());
+
+        List<String> bearishDailySymbols = filteredDailySymbols.stream()
+                .filter(symbolData -> symbolHandler.dailyBearishCriteriaApply(symbolData.bars()))
+                .map(SymbolData::name)
+                .collect(Collectors.toList());
+
+        return Map.of("Bullish", bullishDailySymbols, "Bearish", bearishDailySymbols);
     }
 
+    public record SymbolData(String name, List<OhlcPlusBar> bars) {
+    }
 
 }
 
