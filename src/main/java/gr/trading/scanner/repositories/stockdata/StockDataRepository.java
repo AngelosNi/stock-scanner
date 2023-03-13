@@ -8,6 +8,4 @@ import java.util.List;
 public interface StockDataRepository<T> {
 
     List<T> findStockBySymbolAndDates(String symbol, LocalDateTime start, LocalDateTime end, Interval interval);
-
-    List<T> findMultipleStocksBySymbolsAndDates(List<String> symbols, LocalDateTime start, LocalDateTime end, Interval interval);
 }

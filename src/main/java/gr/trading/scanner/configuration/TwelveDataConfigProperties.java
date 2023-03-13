@@ -10,4 +10,6 @@ import org.springframework.stereotype.Component;
 public class TwelveDataConfigProperties {
 
     private String baseUrl;
+
+    private Double requestRate;
 }

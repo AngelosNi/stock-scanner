@@ -15,3 +15,4 @@ spring:
 
 twelve-data:
   base-url: https://api.twelvedata.com
+  request-rate: 0.9 # Per second

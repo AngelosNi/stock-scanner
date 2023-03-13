@@ -8,7 +8,6 @@ import gr.trading.scanner.model.OhlcBar;
 import gr.trading.scanner.services.tws.TwsMessageHandler;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,10 +40,5 @@ public class TwsSymbolsRepository implements StockDataRepository<OhlcBar> {
             e.printStackTrace();
             throw new RuntimeException("Error Retrieving data.");
         }
-    }
-
-    @Override
-    public List<OhlcBar> findMultipleStocksBySymbolsAndDates(List<String> symbols, LocalDateTime start, LocalDateTime end, Interval interval) {
-        throw new NotImplementedException();
     }
 }
