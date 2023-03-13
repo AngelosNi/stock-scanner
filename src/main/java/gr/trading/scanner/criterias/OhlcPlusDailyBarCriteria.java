@@ -4,7 +4,7 @@ import gr.trading.scanner.model.OhlcPlusBar;
 
 import java.util.List;
 
-public interface OhlcPlus1DayBarCriteria {
+public interface OhlcPlusDailyBarCriteria {
 
     boolean apply(List<OhlcPlusBar> d1Bars) ;
 }

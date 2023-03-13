@@ -3,6 +3,7 @@ package gr.trading.scanner.services;
 import gr.trading.scanner.model.OhlcPlusBar;
 import gr.trading.scanner.utitlities.DateTimeUtils;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class SymbolHandlerExecutor {
 
     private final SymbolHandler symbolHandler;
@@ -45,7 +47,10 @@ public class SymbolHandlerExecutor {
         return symbols.stream()
                 .filter(sym -> {
                         List<OhlcPlusBar> bars = symbolHandler.findAndEnhanceDailyBars(sym, start, dateTimeUtils.getNowDay());
-
+                        if (bars.isEmpty()) {
+                            log.error("{} is empty", sym);
+                            return false;
+                        }
                         return symbolHandler.dailyCriteriasApply(bars);
                 })
                 .collect(Collectors.toList());

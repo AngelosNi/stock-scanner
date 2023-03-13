@@ -1,6 +1,6 @@
 package gr.trading.scanner.services;
 
-import gr.trading.scanner.criterias.OhlcPlus1DayBarCriteria;
+import gr.trading.scanner.criterias.OhlcPlusDailyBarCriteria;
 import gr.trading.scanner.enhancers.OhlcBarEnhanceable;
 import gr.trading.scanner.model.Interval;
 import gr.trading.scanner.model.OhlcBar;
@@ -21,7 +21,7 @@ public class SymbolHandler {
 
     private List<OhlcBarEnhanceable> ohlcBarEnhancers;
 
-    private List<OhlcPlus1DayBarCriteria> ohlcPlus1DayBarCriteria;
+    private List<OhlcPlusDailyBarCriteria> ohlcPlusDailyBarCriteria;
 
     public List<OhlcPlusBar> findAndEnhanceDailyBars(String symbol, LocalDateTime start, LocalDateTime end) {
         List<OhlcBar> bars = repository.findStockBySymbolAndDates(symbol, start, end, Interval.D1);
@@ -46,7 +46,7 @@ public class SymbolHandler {
     }
 
     public boolean dailyCriteriasApply(List<OhlcPlusBar> plusBars) {
-        for (OhlcPlus1DayBarCriteria criteria : ohlcPlus1DayBarCriteria) {
+        for (OhlcPlusDailyBarCriteria criteria : ohlcPlusDailyBarCriteria) {
             if (!criteria.apply(plusBars)) {
                 return false;
             }
