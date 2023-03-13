@@ -1,7 +1,8 @@
 package gr.trading.scanner.mappers;
 
+import gr.trading.scanner.model.Interval;
 import gr.trading.scanner.model.TwelveDataResponseDto;
-import gr.trading.scanner.model.entities.DailyDataEntity;
+import gr.trading.scanner.model.entities.DataEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +14,8 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 public class TwelveDataBarToDataEntityMapper {
 
-    public DailyDataEntity map(TwelveDataResponseDto.Bar bar, String symbol) {
-        DailyDataEntity entity = new DailyDataEntity();
+    public DataEntity map(TwelveDataResponseDto.Bar bar, String symbol, Interval interval) {
+        DataEntity entity = new DataEntity();
 
         entity.setClosePrice(bar.getClose().doubleValue());
         entity.setHighPrice(bar.getHigh().doubleValue());
@@ -32,7 +33,7 @@ public class TwelveDataBarToDataEntityMapper {
             time = LocalDateTime.parse(bar.getDateTime(), formatter);
         }
 
-        entity.setSymbolDateId(new DailyDataEntity.SymbolDateId(symbol, time.toLocalDate()));
+        entity.setId(new DataEntity.Id(symbol, time.toLocalDate(), interval));
 
         return entity;
     }

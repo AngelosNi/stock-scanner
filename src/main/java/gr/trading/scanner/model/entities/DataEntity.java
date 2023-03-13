@@ -1,5 +1,6 @@
 package gr.trading.scanner.model.entities;
 
+import gr.trading.scanner.model.Interval;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -14,15 +15,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "DAILY_DATA")
+@Table(name = "STOCK_DATA")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class DailyDataEntity {
+public class DataEntity {
 
     @EmbeddedId
-    private SymbolDateId symbolDateId;
+    private Id id;
 
     private double openPrice;
 
@@ -38,10 +39,12 @@ public class DailyDataEntity {
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
-    public static class SymbolDateId implements Serializable {
+    public static class Id implements Serializable {
 
         private String symbol;
 
         private LocalDate actionDate;
+
+        private Interval barInterval;
     }
 }

@@ -24,7 +24,7 @@ public class TwsSymbolsRepository implements StockDataRepository<OhlcBar> {
     private BarToOhlcBarMapper barToOhlcBarMapper;
 
     @Override
-    public List<OhlcBar> findStockBySymbolAndDates(String symbol, LocalDateTime start, LocalDateTime end, Interval interval) {
+    public List<OhlcBar> findStockDataBySymbolAndDates(String symbol, LocalDateTime start, LocalDateTime end, Interval interval) {
         Contract contract = new Contract();
         contract.symbol(symbol);
         contract.secType("STK");

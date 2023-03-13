@@ -1,5 +1,6 @@
 package gr.trading.scanner.services;
 
+import gr.trading.scanner.criterias.fivemin.OhlcPlus5MinBarCriteria;
 import gr.trading.scanner.model.OhlcPlusBar;
 import gr.trading.scanner.utitlities.DateTimeUtils;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,56 +22,91 @@ public class SymbolHandlerExecutor {
 
     private final DateTimeUtils dateTimeUtils;
 
-//    public List<OhlcPlusBar> findAndEnhanceOhlcBarsParallel(List<String> symbols, LocalDateTime start, LocalDateTime end, Interval interval) throws ExecutionException, InterruptedException {
-//
-//        List<Future<List<OhlcPlusBar>>> tasks = new ArrayList<>();
-//        List<Future<List<OhlcBar>>> dailyTasks = new ArrayList<>();
-//        for (String symbol : symbols) {
-//            tasks.add(CompletableFuture.completedFuture(symbolHandler.findAndEnhanceDailyBars(symbol, start, dateTimeUtils.getNowDayTime(), Interval.M5)));
-//            dailyTasks.add(CompletableFuture.completedFuture(symbolHandler.findOhlcBars(symbol, start, dateTimeUtils.getNowDay(), Interval.D1)));
-//        }
-//
-//        List<OhlcPlusBar> bars = new ArrayList<>();
-//        List<OhlcBar> dailyBars = new ArrayList<>();
-//
-//        for (Future<List<OhlcPlusBar>> task : tasks) {
-//            bars.addAll(task.get());
-//        }
-//
-//        for (Future<List<OhlcBar>> task : dailyTasks) {
-//            dailyBars.addAll(task.get());
-//        }
-//
-//        return bars;
-//    }
+    public Map<String, List<String>> findSymbolsByCriteria(List<String> symbols, LocalDateTime start, LocalDateTime end) {
+        Map<String, List<DailySymbolData>> filteredDailyByCategory = findSymbolsByDailyCriteria(symbols, start, end);
 
-    public Map<String, List<String>> findSymbolsByCriterias(List<String> symbols, LocalDateTime start, LocalDateTime end) {
-        List<SymbolData> filteredDailySymbols = symbols.stream()
-                .map(sym -> new SymbolData(sym, symbolHandler.findAndEnhanceDailyBars(sym, start, dateTimeUtils.getNowDay())))
-                .filter(symbolData -> {
-                    if (symbolData.bars().isEmpty()) {
-                        log.error("{} is empty", symbolData);
+        List<DailySymbolData> filteredDailyList = filteredDailyByCategory.values().stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        return findSymbolsBy5MinCriteria(filteredDailyList, start, end);
+    }
+
+    private Map<String, List<DailySymbolData>> findSymbolsByDailyCriteria(List<String> symbols, LocalDateTime start, LocalDateTime end) {
+        List<DailySymbolData> filteredDailySymbols = symbols.stream()
+                .map(sym -> new DailySymbolData(sym, symbolHandler.findAndEnhanceDailyBars(sym, start, dateTimeUtils.getNowDay())))
+                .filter(dailySymbolData -> {
+                    if (dailySymbolData.dailyBars().isEmpty()) {
+                        log.error("{} is empty", dailySymbolData);
                         return false;
                     }
                     return true;
                 })
-                .filter(symbolData -> symbolHandler.dailyCriteriaApply(symbolData.bars()))
+                .filter(dailySymbolData -> symbolHandler.dailyCriteriaApply(dailySymbolData.dailyBars()))
                 .collect(Collectors.toList());
 
-        List<String> bullishDailySymbols = filteredDailySymbols.stream()
-                .filter(symbolData -> symbolHandler.dailyBullishCriteriaApply(symbolData.bars()))
-                .map(SymbolData::name)
+        List<DailySymbolData> bullishDailyDailySymbolData = filteredDailySymbols.stream()
+                .filter(dailySymbolData -> symbolHandler.dailyBullishCriteriaApply(dailySymbolData.dailyBars()))
                 .collect(Collectors.toList());
 
-        List<String> bearishDailySymbols = filteredDailySymbols.stream()
-                .filter(symbolData -> symbolHandler.dailyBearishCriteriaApply(symbolData.bars()))
-                .map(SymbolData::name)
+        List<DailySymbolData> bearishDailyDailySymbolData = filteredDailySymbols.stream()
+                .filter(dailySymbolData -> symbolHandler.dailyBearishCriteriaApply(dailySymbolData.dailyBars()))
                 .collect(Collectors.toList());
 
-        return Map.of("Bullish", bullishDailySymbols, "Bearish", bearishDailySymbols);
+        return Map.of("Bullish", bullishDailyDailySymbolData, "Bearish", bearishDailyDailySymbolData);
     }
 
-    public record SymbolData(String name, List<OhlcPlusBar> bars) {
+    private Map<String, List<String>> findSymbolsBy5MinCriteria(List<DailySymbolData> dailySymbolsData, LocalDateTime start, LocalDateTime end) {
+        List<Min5SymbolData> filtered5MinSymbols = dailySymbolsData.stream()
+                .map(dailySymbolData -> new Min5SymbolData(dailySymbolData.name(), dailySymbolData.dailyBars(), symbolHandler.findAndEnhance5MinBars(dailySymbolData.name(), start, dateTimeUtils.getNowDay())))
+                .filter(min5SymbolData -> {
+                    if (min5SymbolData.dailyBars().isEmpty()) {
+                        log.error("{} is empty", min5SymbolData);
+                        return false;
+                    }
+                    return true;
+                })
+                .filter(min5SymbolData -> {
+                    try {
+                        return symbolHandler.min5CriteriaApply(min5SymbolData.min5Bars(), min5SymbolData.dailyBars());
+                    } catch (OhlcPlus5MinBarCriteria.NoRecentDataException e) {
+                        log.warn("No recent data was found for 5 min {}", min5SymbolData.name());
+                        return false;
+                    }
+                })
+                .collect(Collectors.toList());
+
+        List<String> bullish5MinSymbols = filtered5MinSymbols.stream()
+                .filter(min5SymbolData -> {
+                    try {
+                        return symbolHandler.min5BullishCriteriaApply(min5SymbolData.min5Bars(), min5SymbolData.dailyBars());
+                    } catch (OhlcPlus5MinBarCriteria.NoRecentDataException e) {
+                        log.warn("No recent data was found for 5 min {}", min5SymbolData.name());
+                        return false;
+                    }
+                })
+                .map(Min5SymbolData::name)
+                .collect(Collectors.toList());
+
+        List<String> bearish5MinSymbols = filtered5MinSymbols.stream()
+                .filter(min5SymbolData -> {
+                    try {
+                        return symbolHandler.min5BearishCriteriaApply(min5SymbolData.min5Bars(), min5SymbolData.dailyBars());
+                    } catch (OhlcPlus5MinBarCriteria.NoRecentDataException e) {
+                        log.warn("No recent data was found for 5 min {}", min5SymbolData.name());
+                        return false;
+                    }
+                })
+                .map(Min5SymbolData::name)
+                .collect(Collectors.toList());
+
+        return Map.of("Bullish", bullish5MinSymbols, "Bearish", bearish5MinSymbols);
+    }
+
+    public record DailySymbolData(String name, List<OhlcPlusBar> dailyBars) {
+    }
+
+    public record Min5SymbolData(String name, List<OhlcPlusBar> dailyBars, List<OhlcPlusBar> min5Bars) {
     }
 
 }

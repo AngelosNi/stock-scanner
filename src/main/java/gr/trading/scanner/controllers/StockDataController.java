@@ -34,7 +34,7 @@ public class StockDataController {
 
         List<String> symbols = tickersRepository.findAll();
 
-        Map<String, List<String>> filteredSymbols = symbolHandlerExecutor.findSymbolsByCriterias(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 10), dateTimeUtils.getNowDayTime().minusHours(7));
+        Map<String, List<String>> filteredSymbols = symbolHandlerExecutor.findSymbolsByCriteria(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 10), dateTimeUtils.getNowDayTime().minusHours(7));
 
         long elapsedTime = System.nanoTime() - startTime;
         log.info("Time elapsed (ms): {}", elapsedTime / 1000000);
