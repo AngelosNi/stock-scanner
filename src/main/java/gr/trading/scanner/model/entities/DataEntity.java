@@ -1,10 +1,7 @@
 package gr.trading.scanner.model.entities;
 
 import gr.trading.scanner.model.Interval;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "STOCK_DATA")
@@ -43,8 +40,9 @@ public class DataEntity {
 
         private String symbol;
 
-        private LocalDate actionDate;
+        private LocalDateTime barDateTime;
 
+        @Enumerated(EnumType.STRING)
         private Interval barInterval;
     }
 }

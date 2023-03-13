@@ -33,7 +33,7 @@ public class TwelveDataBarToDataEntityMapper {
             time = LocalDateTime.parse(bar.getDateTime(), formatter);
         }
 
-        entity.setId(new DataEntity.Id(symbol, time.toLocalDate(), interval));
+        entity.setId(new DataEntity.Id(symbol, time, interval));
 
         return entity;
     }

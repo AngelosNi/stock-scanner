@@ -17,7 +17,7 @@ public class StockDataEntityToOhlcBarMapper {
         ohlcBar.setOpen(dataEntity.getOpenPrice());
         ohlcBar.setLow(dataEntity.getLowPrice());
         ohlcBar.setVolume(dataEntity.getVolume());
-        ohlcBar.setTime(dataEntity.getId().getActionDate().atStartOfDay());
+        ohlcBar.setTime(dataEntity.getId().getBarDateTime());
 
         return ohlcBar;
     }
