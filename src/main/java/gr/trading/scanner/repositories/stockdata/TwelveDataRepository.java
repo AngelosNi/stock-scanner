@@ -41,6 +41,7 @@ public class TwelveDataRepository implements StockDataRepository<OhlcBar> {
                 .collect(Collectors.toList())
                 .containsAll(dateTimeUtils.getInBetweenDates(start.toLocalDate(), end.toLocalDate()));
 
+
         if (isDataMissing) {
             dailyBars = fetchDataFromTwelveEndpoint(symbol, start, end, interval);
             dailyBars.forEach(s -> {

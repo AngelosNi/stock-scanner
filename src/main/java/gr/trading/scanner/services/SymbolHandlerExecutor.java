@@ -5,12 +5,15 @@ import gr.trading.scanner.model.OhlcPlusBar;
 import gr.trading.scanner.utitlities.DateTimeUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,14 +25,15 @@ public class SymbolHandlerExecutor {
 
     private final DateTimeUtils dateTimeUtils;
 
-    public Map<String, List<String>> findSymbolsByCriteria(List<String> symbols, LocalDateTime start, LocalDateTime end) {
+    @Async
+    public Future<Map<String, List<String>>> findSymbolsByCriteria(List<String> symbols, LocalDateTime start, LocalDateTime end) {
         Map<String, List<DailySymbolData>> filteredDailyByCategory = findSymbolsByDailyCriteria(symbols, start, end);
 
         List<DailySymbolData> filteredDailyList = filteredDailyByCategory.values().stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        return findSymbolsBy5MinCriteria(filteredDailyList, start, end);
+        return CompletableFuture.completedFuture(findSymbolsBy5MinCriteria(filteredDailyList, start, end));
     }
 
     private Map<String, List<DailySymbolData>> findSymbolsByDailyCriteria(List<String> symbols, LocalDateTime start, LocalDateTime end) {

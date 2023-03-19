@@ -1,7 +1,7 @@
 package gr.trading.scanner.controllers;
 
 import gr.trading.scanner.repositories.tickers.TickersRepository;
-import gr.trading.scanner.services.SymbolHandlerExecutor;
+import gr.trading.scanner.services.ParallelExecutor;
 import gr.trading.scanner.utitlities.DateTimeUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,21 +20,21 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 public class StockDataController {
 
-    private final SymbolHandlerExecutor symbolHandlerExecutor;
+    private final ParallelExecutor parallelExecutor;
 
     private final DateTimeUtils dateTimeUtils;
 
     private final TickersRepository tickersRepository;
 
     @GetMapping("/stock")
-    public Map<String, List<String>> getSymbols() throws ExecutionException, InterruptedException, IOException {
+    public List<Map<String, List<String>>> getSymbols() throws ExecutionException, InterruptedException, IOException {
         long startTime = System.nanoTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate start = LocalDate.parse("2023-02-20", formatter);
 
         List<String> symbols = tickersRepository.findAll();
 
-        Map<String, List<String>> filteredSymbols = symbolHandlerExecutor.findSymbolsByCriteria(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 10), dateTimeUtils.getNowDayTime().minusHours(7));
+        List<Map<String, List<String>>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 10), dateTimeUtils.getNowDayTime().minusHours(7));
 
         long elapsedTime = System.nanoTime() - startTime;
         log.info("Time elapsed (ms): {}", elapsedTime / 1000000);

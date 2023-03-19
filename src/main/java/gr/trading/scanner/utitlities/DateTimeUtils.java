@@ -19,10 +19,10 @@ public class DateTimeUtils {
         return LocalDateTime.now();
     }
 
-    public List<LocalDate> getInBetweenDates(LocalDate start, LocalDate end) {
-        List<LocalDate> inBetweenDates = new ArrayList<>();
+    public List<LocalDateTime> getInBetweenDates(LocalDate start, LocalDate end) {
+        List<LocalDateTime> inBetweenDates = new ArrayList<>();
         for (LocalDate date = start; date.isBefore(end); date = addDaysSkippingWeekends(date.atStartOfDay(), 1).toLocalDate()) {
-            inBetweenDates.add(date);
+            inBetweenDates.add(date.atStartOfDay());
         }
 
         return inBetweenDates;
