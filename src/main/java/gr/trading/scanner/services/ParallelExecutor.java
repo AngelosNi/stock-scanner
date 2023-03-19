@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -26,7 +27,7 @@ public class ParallelExecutor {
 
     private DailyDataCache dailyDataCache;
 
-    public List<Map<String, List<String>>> findSymbolsByCriteriaParallel(List<String> symbols, LocalDateTime start, LocalDateTime end) throws ExecutionException, InterruptedException {
+    public Map<String, List<String>> findSymbolsByCriteriaParallel(List<String> symbols, LocalDateTime start, LocalDateTime end) throws ExecutionException, InterruptedException {
         dailyDataCache.initCache(dbStockDataRepository.findBySymbolsAndIntervalAndStartDate(symbols, Interval.D1, start.toLocalDate().atStartOfDay()));
         log.info("Cache filled");
 
@@ -41,6 +42,14 @@ public class ParallelExecutor {
             bars.add(task.get());
         }
 
-        return bars;
+        return bars.stream()
+                .flatMap(m -> m.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (l1, l2) -> {
+                            List<String> l = new ArrayList<>(l1);
+                            l.addAll(l2);
+                            return l;
+                        }));
     }
 }

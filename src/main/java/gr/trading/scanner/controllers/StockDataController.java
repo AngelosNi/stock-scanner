@@ -27,14 +27,14 @@ public class StockDataController {
     private final TickersRepository tickersRepository;
 
     @GetMapping("/stock")
-    public List<Map<String, List<String>>> getSymbols() throws ExecutionException, InterruptedException, IOException {
+    public Map<String, List<String>> getSymbols() throws ExecutionException, InterruptedException, IOException {
         long startTime = System.nanoTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate start = LocalDate.parse("2023-02-20", formatter);
 
         List<String> symbols = tickersRepository.findAll();
 
-        List<Map<String, List<String>>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 10), dateTimeUtils.getNowDayTime().minusHours(7));
+        Map<String, List<String>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 10), dateTimeUtils.getNowDayTime().minusHours(7));
 
         long elapsedTime = System.nanoTime() - startTime;
         log.info("Time elapsed (ms): {}", elapsedTime / 1000000);
