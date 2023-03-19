@@ -1,7 +1,9 @@
 package gr.trading.scanner.utitlities;
 
+import gr.trading.scanner.model.Interval;
 import org.springframework.stereotype.Component;
 
+import java.security.InvalidParameterException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,10 +21,10 @@ public class DateTimeUtils {
         return LocalDateTime.now();
     }
 
-    public List<LocalDateTime> getInBetweenDates(LocalDate start, LocalDate end) {
+    public List<LocalDateTime> getInBetweenTimes(LocalDateTime start, LocalDateTime end, Interval interval) {
         List<LocalDateTime> inBetweenDates = new ArrayList<>();
-        for (LocalDate date = start; date.isBefore(end); date = addDaysSkippingWeekends(date.atStartOfDay(), 1).toLocalDate()) {
-            inBetweenDates.add(date.atStartOfDay());
+        for (LocalDateTime time = start; time.isBefore(end); time = addIntervalsSkippingOffHours(time, 1, interval)) {
+            inBetweenDates.add(time);
         }
 
         return inBetweenDates;
@@ -50,5 +52,16 @@ public class DateTimeUtils {
             }
         }
         return result;
+    }
+
+    private LocalDateTime addIntervalsSkippingOffHours(LocalDateTime dateTime, int periods, Interval interval) {
+        switch (interval) {
+            case D1:
+                return addDaysSkippingWeekends(dateTime, periods);
+            case M5:
+                return dateTime.plusMinutes(5L * periods);
+            default:
+                throw new InvalidParameterException();
+        }
     }
 }
