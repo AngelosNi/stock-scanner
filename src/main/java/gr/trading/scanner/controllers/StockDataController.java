@@ -8,9 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -29,16 +29,23 @@ public class StockDataController {
     @GetMapping("/stock")
     public Map<String, List<String>> getSymbols() throws ExecutionException, InterruptedException, IOException {
         long startTime = System.nanoTime();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate start = LocalDate.parse("2023-02-20", formatter);
 
         List<String> symbols = tickersRepository.findAll();
 
         Map<String, List<String>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 10), dateTimeUtils.getNowDayTime().minusHours(7));
 
+        writeToFile(filteredSymbols.get("Bullish"), "bullish");
+        writeToFile(filteredSymbols.get("Bearish"), "bearish");
+
         long elapsedTime = System.nanoTime() - startTime;
         log.info("Time elapsed (ms): {}", elapsedTime / 1000000);
 
         return filteredSymbols;
+    }
+
+    private void writeToFile(List<String> symbols, String fileName) throws IOException {
+        try (FileWriter outputfile = new FileWriter("C:\\Users\\angel\\Downloads\\" + fileName + ".txt")) {
+            outputfile.write(String.join(",", symbols));
+        }
     }
 }

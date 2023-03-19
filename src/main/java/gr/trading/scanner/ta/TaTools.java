@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.indicators.ATRIndicator;
+import org.ta4j.core.indicators.SMAIndicator;
+import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -16,10 +18,15 @@ public class TaTools {
     public static final int ATR_LENGTH = 10;
 
     public <T extends OhlcBar> double calculateAtr(List<T> bars) {
-        BarSeries series = new BaseBarSeriesBuilder().build();
-        bars.forEach(bar -> series.addBar(bar.getTime().atZone(ZoneId.of("America/New_York")), bar.getOpen(), bar.getHigh(), bar.getLow(), bar.getClose()));
+        BarSeries series = convertToBarSeries(bars);
 
-        return new ATRIndicator(series, ATR_LENGTH).getValue(series.getBarCount() - 1).doubleValue();
+        return new ATRIndicator(series, ATR_LENGTH).getValue(series.getEndIndex()).doubleValue();
+    }
+
+    public <T extends OhlcBar> double calculateSma(List<T> bars, int period) {
+        BarSeries series = convertToBarSeries(bars);
+
+        return new SMAIndicator(new ClosePriceIndicator(series), period).getValue(series.getEndIndex()).doubleValue();
     }
 
     public  <T extends OhlcBar> List<T> convertToHeikinAshi(List<T> ohlcBars) {
@@ -53,5 +60,12 @@ public class TaTools {
         }
 
         return haBars;
+    }
+
+    private <T extends OhlcBar> BarSeries convertToBarSeries(List<T> bars) {
+        BarSeries series = new BaseBarSeriesBuilder().build();
+        bars.forEach(bar -> series.addBar(bar.getTime().atZone(ZoneId.of("America/New_York")), bar.getOpen(), bar.getHigh(), bar.getLow(), bar.getClose()));
+
+        return series;
     }
 }

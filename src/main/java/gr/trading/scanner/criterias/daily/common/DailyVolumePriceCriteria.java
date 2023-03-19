@@ -11,7 +11,7 @@ import java.util.List;
 @Qualifier("CommonCriteria")
 public class DailyVolumePriceCriteria implements OhlcPlusDailyBarCriteria {
 
-    private final double AVERAGE_THRESHOLD = 100; // in mils
+    private final double AVERAGE_THRESHOLD = 300; // in mils
 
     @Override
     public boolean apply(List<OhlcPlusBar> d1Bars) {

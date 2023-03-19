@@ -5,15 +5,12 @@ import lombok.Getter;
 @Getter
 public enum Interval {
 
-    M5("5 mins", "5min"),
-    D1("1 day", "1day");
-
-    private String twsInterval;
+    M5("5min"),
+    D1("1day");
 
     private String twelveDataInterval;
 
-    Interval(String twsInterval, String twelveDataInterval) {
-        this.twsInterval = twsInterval;
+    Interval(String twelveDataInterval) {
         this.twelveDataInterval = twelveDataInterval;
     }
 }

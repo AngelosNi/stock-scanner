@@ -23,8 +23,8 @@ public class SymbolHandlerExecutor {
 
     @Async
     public Future<Map<String, List<String>>> findSymbolsByCriteria(List<String> symbols, LocalDateTime start, LocalDateTime end) {
-        Map<String, List<String>> filteredSymbols = Map.of("Bullish", min5Scanner.filterBullish(dailyScanner.filterBullish(symbols, start), start),
-                "Bearish", min5Scanner.filterBearish(dailyScanner.filterBearish(symbols, start), start));
+        Map<String, List<String>> filteredSymbols = Map.of("Bullish", min5Scanner.filterBullish(dailyScanner.filterBullish(List.of("GILD"), start.minusDays(200)), start),
+                "Bearish", min5Scanner.filterBearish(dailyScanner.filterBearish(List.of("GILD"), start.minusDays(200)), start));
 
         return CompletableFuture.completedFuture(filteredSymbols);
     }
