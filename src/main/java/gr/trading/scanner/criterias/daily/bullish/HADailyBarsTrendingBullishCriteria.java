@@ -13,14 +13,9 @@ import java.util.List;
 @Qualifier("BullishCriteria")
 public class HADailyBarsTrendingBullishCriteria implements OhlcPlusDailyBarCriteria {
 
-    private static final int LOOK_BEHIND_PERIOD = 3;
-
-    private final TaTools taTools;
-
     private final HADailyBarsTrendingCriteria haDailyBarsTrendingCriteria;
 
     public HADailyBarsTrendingBullishCriteria(TaTools taTools) {
-        this.taTools = taTools;
         this.haDailyBarsTrendingCriteria = new HADailyBarsTrendingCriteria(taTools, bar -> bar.getClose() > bar.getOpen());
     }
 

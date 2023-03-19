@@ -34,7 +34,7 @@ public class TwelveDataRepository implements StockDataRepository<OhlcBar> {
 
     @Override
     public List<OhlcBar> findStockDataBySymbolAndDates(String symbol, LocalDateTime start, LocalDateTime end, Interval interval) {
-        List<DataEntity> bars = new ArrayList<>(dbStockDataRepository.findByIdSymbolAndIdBarInterval(symbol, interval));
+        List<DataEntity> bars = new ArrayList<>(dbStockDataRepository.findByIdSymbolAndIdBarIntervalAndIdBarDateTimeGreaterThanEqual(symbol, interval, start));
 
         boolean isDataMissing = !bars.stream()
                 .map(e -> e.getId().getBarDateTime())
@@ -46,10 +46,10 @@ public class TwelveDataRepository implements StockDataRepository<OhlcBar> {
             bars = fetchDataFromTwelveEndpoint(symbol, start, end, interval);
             bars.forEach(s -> {
                 dbStockDataRepository.save(s);
-                log.info("Inserted to DB symbol: {}, action_date: {}", s.getId().getSymbol(), s.getId().getBarDateTime());
+                log.debug("Inserted to DB symbol: {}, interval: {}, action_date: {}", s.getId().getSymbol(), interval.name(), s.getId().getBarDateTime());
             });
         } else {
-            log.info("All data for symbol {} already exist", symbol);
+            log.debug("All data for symbol {} and interval {} already exist", symbol, interval.name());
         }
 
         return bars.stream()

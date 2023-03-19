@@ -25,7 +25,8 @@ public class SymbolEnhancer {
     }
 
     public List<OhlcPlusBar> findAndEnhanceDailyBars(String symbol, LocalDateTime start, LocalDateTime end) {
-        return findAndEnhanceBars(symbol, start, end, Interval.D1);
+        // All daily bars should set their time at 0:00:00
+        return findAndEnhanceBars(symbol, start.toLocalDate().atStartOfDay(), end, Interval.D1);
     }
 
     public List<OhlcPlusBar> findAndEnhance5MinBars(String symbol, LocalDateTime start, LocalDateTime end) {

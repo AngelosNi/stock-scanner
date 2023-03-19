@@ -28,9 +28,20 @@ public class Min5Scanner implements Scanner {
     @Qualifier("BearishCriteria")
     private List<OhlcPlus5MinBarCriteria> bearishCriteria;
 
+    @Qualifier("CommonCriteria")
+    private List<OhlcPlus5MinBarCriteria> commonCriteria;
+
     @Override
     public List<String> filterBullish(List<String> symbols, LocalDateTime start) {
         return constructBars(symbols, start).stream()
+                .filter(min5SymbolData -> {
+                    try {
+                        return commonCriteriaApply(min5SymbolData.min5Bars(), min5SymbolData.dailyBars());
+                    } catch (OhlcPlus5MinBarCriteria.NoRecentDataException e) {
+                        log.warn("No recent data was found for 5 min {}", min5SymbolData.name());
+                        return false;
+                    }
+                })
                 .filter(min5SymbolData -> {
                     try {
                         return bullishCriteriaApply(min5SymbolData.min5Bars(), min5SymbolData.dailyBars());
@@ -84,6 +95,15 @@ public class Min5Scanner implements Scanner {
     private boolean bearishCriteriaApply(List<OhlcPlusBar> min5PlusBars, List<OhlcPlusBar> dailyPlusBars) throws OhlcPlus5MinBarCriteria.NoRecentDataException {
         for (OhlcPlus5MinBarCriteria criteria : bearishCriteria) {
             if (!criteria.apply(min5PlusBars, dailyPlusBars)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean commonCriteriaApply(List<OhlcPlusBar> plusBars, List<OhlcPlusBar> dailyPlusBars) throws OhlcPlus5MinBarCriteria.NoRecentDataException {
+        for (OhlcPlus5MinBarCriteria criteria : commonCriteria) {
+            if (!criteria.apply(plusBars, dailyPlusBars)) {
                 return false;
             }
         }

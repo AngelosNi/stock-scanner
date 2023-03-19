@@ -28,9 +28,13 @@ public class DailyScanner implements Scanner {
     @Qualifier("BearishCriteria")
     private List<OhlcPlusDailyBarCriteria> bearishCriteria;
 
+    @Qualifier("CommonCriteria")
+    private List<OhlcPlusDailyBarCriteria> commonCriteria;
+
     @Override
     public List<String> filterBullish(List<String> symbols, LocalDateTime start) {
         return constructBars(symbols, start).stream()
+                .filter(dailySymbolData -> commonCriteriaApply(dailySymbolData.dailyBars()))
                 .filter(dailySymbolData -> bullishCriteriaApply(dailySymbolData.dailyBars()))
                 .map(DailySymbolData::name)
                 .collect(Collectors.toList());
@@ -68,6 +72,15 @@ public class DailyScanner implements Scanner {
 
     private boolean bearishCriteriaApply(List<OhlcPlusBar> plusBars) {
         for (OhlcPlusDailyBarCriteria criteria : bearishCriteria) {
+            if (!criteria.apply(plusBars)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean commonCriteriaApply(List<OhlcPlusBar> plusBars) {
+        for (OhlcPlusDailyBarCriteria criteria : commonCriteria) {
             if (!criteria.apply(plusBars)) {
                 return false;
             }

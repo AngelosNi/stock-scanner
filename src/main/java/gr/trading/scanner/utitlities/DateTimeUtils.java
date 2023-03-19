@@ -54,12 +54,27 @@ public class DateTimeUtils {
         return result;
     }
 
+    private LocalDateTime add5MinutesSkippingOffHours(LocalDateTime dateTime, int periods) {
+        LocalDateTime result = dateTime;
+        int addedMinutes = 0;
+        while (addedMinutes < periods) {
+            result = result.plusMinutes(5);
+            if (result.isAfter(result.toLocalDate().atTime(9, 29, 0))
+                    && result.isBefore(result.toLocalDate().atTime(15, 56, 0))
+                    && result.getDayOfWeek() != DayOfWeek.SATURDAY
+                    && result.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                addedMinutes += 5;
+            }
+        }
+        return result;
+    }
+
     private LocalDateTime addIntervalsSkippingOffHours(LocalDateTime dateTime, int periods, Interval interval) {
         switch (interval) {
             case D1:
                 return addDaysSkippingWeekends(dateTime, periods);
             case M5:
-                return dateTime.plusMinutes(5L * periods);
+                return add5MinutesSkippingOffHours(dateTime, 5 * periods);
             default:
                 throw new InvalidParameterException();
         }

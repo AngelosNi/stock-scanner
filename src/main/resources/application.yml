@@ -4,7 +4,13 @@ spring:
     username: SA
     password: P@ssw0rd
   jpa:
+#    show-sql: true
     properties:
+      hibernate:
+        jdbc:
+          fetch_size: 100
+#        generate_statistics: true
+        order_inserts: true
       javax:
         persistence:
           schema-generation:
