@@ -75,7 +75,7 @@ public class Min5Scanner implements Scanner {
                         symbolEnhancer.findAndEnhance5MinBars(symbol, start, dateTimeUtils.getNowDay())))
                 .filter(min5SymbolData -> {
                     if (min5SymbolData.dailyBars().isEmpty()) {
-                        log.error("{} is empty", min5SymbolData);
+                        log.warn("{} is empty", min5SymbolData);
                         return false;
                     }
                     return true;

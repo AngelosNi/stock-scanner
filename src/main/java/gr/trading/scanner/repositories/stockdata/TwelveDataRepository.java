@@ -39,21 +39,22 @@ public class TwelveDataRepository implements StockDataRepository<OhlcBar> {
     public List<OhlcBar> findStockDataBySymbolAndDates(String symbol, LocalDateTime start, LocalDateTime end, Interval interval) {
         List<DataEntity> bars = new ArrayList<>(dailyDataCache.getSymbolDataEntities(symbol, interval, start)
                 .orElseGet(() -> {
-                    log.info("Cache miss on {}", symbol);
+                    log.info("Cache miss on {} and interval {}", symbol, interval);
                     return dbStockDataRepository.findByIdSymbolAndIdBarIntervalAndIdBarDateTimeGreaterThanEqual(symbol, interval, start);
                 }));
 
         boolean isDataMissing = bars.isEmpty() || !bars.get(bars.size() - 1).getId().getBarDateTime().equals(dateTimeUtils.getLastWorkingHoursDateTime(interval));
 
-
         if (isDataMissing) {
             bars = fetchDataFromTwelveEndpoint(symbol, start, end, interval);
-            bars.forEach(s -> {
-                dbStockDataRepository.save(s);
-                log.info("Inserted to DB symbol: {}, interval: {}, action_date: {}", s.getId().getSymbol(), interval.name(), s.getId().getBarDateTime());
-            });
+            if (interval == Interval.D1) {
+                bars.forEach(s -> {
+                    dbStockDataRepository.save(s);
+                    log.debug("Inserted to DB symbol: {}, interval: {}, action_date: {}", s.getId().getSymbol(), interval.name(), s.getId().getBarDateTime());
+                });
+            }
         } else {
-            log.info("All data for symbol {} and interval {} already exist", symbol, interval.name());
+            log.debug("All data for symbol {} and interval {} already exist", symbol, interval.name());
         }
 
         return bars.stream()

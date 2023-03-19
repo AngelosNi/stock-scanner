@@ -43,6 +43,7 @@ public class DailyScanner implements Scanner {
     @Override
     public List<String> filterBearish(List<String> symbols, LocalDateTime start) {
         return constructBars(symbols, start).stream()
+                .filter(dailySymbolData -> commonCriteriaApply(dailySymbolData.dailyBars()))
                 .filter(dailySymbolData -> bearishCriteriaApply(dailySymbolData.dailyBars()))
                 .map(DailySymbolData::name)
                 .collect(Collectors.toList());
@@ -53,7 +54,7 @@ public class DailyScanner implements Scanner {
                 .map(sym -> new DailySymbolData(sym, symbolEnhancer.findAndEnhanceDailyBars(sym, start, dateTimeUtils.getNowDay())))
                 .filter(dailySymbolData -> {
                     if (dailySymbolData.dailyBars().isEmpty()) {
-                        log.error("{} is empty", dailySymbolData);
+                        log.warn("{} is empty", dailySymbolData);
                         return false;
                     }
                     return true;
