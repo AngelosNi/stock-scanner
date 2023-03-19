@@ -5,6 +5,7 @@ import gr.trading.scanner.mappers.TwelveDataBarToDataEntityMapper;
 import gr.trading.scanner.model.Interval;
 import gr.trading.scanner.model.OhlcBar;
 import gr.trading.scanner.model.entities.DataEntity;
+import gr.trading.scanner.repositories.DailyDataCache;
 import gr.trading.scanner.services.twelvedata.TwelveDataClient;
 import gr.trading.scanner.utitlities.DateTimeUtils;
 import lombok.AllArgsConstructor;
@@ -32,24 +33,27 @@ public class TwelveDataRepository implements StockDataRepository<OhlcBar> {
 
     private final DateTimeUtils dateTimeUtils;
 
+    private final DailyDataCache dailyDataCache;
+
     @Override
     public List<OhlcBar> findStockDataBySymbolAndDates(String symbol, LocalDateTime start, LocalDateTime end, Interval interval) {
-        List<DataEntity> bars = new ArrayList<>(dbStockDataRepository.findByIdSymbolAndIdBarIntervalAndIdBarDateTimeGreaterThanEqual(symbol, interval, start));
+        List<DataEntity> bars = new ArrayList<>(dailyDataCache.getSymbolDataEntities(symbol, interval, start)
+                .orElseGet(() -> {
+                    log.info("Cache miss on {}", symbol);
+                    return dbStockDataRepository.findByIdSymbolAndIdBarIntervalAndIdBarDateTimeGreaterThanEqual(symbol, interval, start);
+                }));
 
-        boolean isDataMissing = !bars.stream()
-                .map(e -> e.getId().getBarDateTime())
-                .collect(Collectors.toList())
-                .containsAll(dateTimeUtils.getInBetweenTimes(start, end, interval));
+        boolean isDataMissing = bars.isEmpty() || !bars.get(bars.size() - 1).getId().getBarDateTime().equals(dateTimeUtils.getLastWorkingHoursDateTime(interval));
 
 
         if (isDataMissing) {
             bars = fetchDataFromTwelveEndpoint(symbol, start, end, interval);
             bars.forEach(s -> {
                 dbStockDataRepository.save(s);
-                log.debug("Inserted to DB symbol: {}, interval: {}, action_date: {}", s.getId().getSymbol(), interval.name(), s.getId().getBarDateTime());
+                log.info("Inserted to DB symbol: {}, interval: {}, action_date: {}", s.getId().getSymbol(), interval.name(), s.getId().getBarDateTime());
             });
         } else {
-            log.debug("All data for symbol {} and interval {} already exist", symbol, interval.name());
+            log.info("All data for symbol {} and interval {} already exist", symbol, interval.name());
         }
 
         return bars.stream()
