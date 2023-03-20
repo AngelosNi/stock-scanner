@@ -71,7 +71,7 @@ public class Min5Scanner implements Scanner {
 
     private List<Min5SymbolData> constructBars(List<String> symbols, LocalDateTime start) {
         return symbols.stream()
-                .map(symbol -> new Min5SymbolData(symbol, symbolEnhancer.findAndEnhanceDailyBars(symbol, start, dateTimeUtils.getNowDay()),
+                .map(symbol -> new Min5SymbolData(symbol, symbolEnhancer.findDailyBars(symbol, start, dateTimeUtils.getNowDay()),
                         symbolEnhancer.findAndEnhance5MinBars(symbol, start, dateTimeUtils.getNowDay())))
                 .filter(min5SymbolData -> {
                     if (min5SymbolData.dailyBars().isEmpty()) {

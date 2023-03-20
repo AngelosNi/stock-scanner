@@ -24,25 +24,20 @@ public class SymbolEnhancer {
         this.ohlcBarEnhancers = ohlcBarEnhancers;
     }
 
-    public List<OhlcPlusBar> findAndEnhanceDailyBars(String symbol, LocalDateTime start, LocalDateTime end) {
+    public List<OhlcPlusBar> findDailyBars(String symbol, LocalDateTime start, LocalDateTime end) {
         // All daily bars should set their time at 0:00:00
-        return findAndEnhanceBars(symbol, start.toLocalDate().atStartOfDay(), end, Interval.D1);
+        return findBars(symbol, start.toLocalDate().atStartOfDay(), end, Interval.D1);
     }
 
     public List<OhlcPlusBar> findAndEnhance5MinBars(String symbol, LocalDateTime start, LocalDateTime end) {
         return findAndEnhanceBars(symbol, start, end, Interval.M5);
     }
 
-    private List<OhlcPlusBar> findAndEnhanceBars(String symbol, LocalDateTime start, LocalDateTime end, Interval interval) {
+    private List<OhlcPlusBar> findBars(String symbol, LocalDateTime start, LocalDateTime end, Interval interval) {
         List<OhlcBar> bars = repository.findStockDataBySymbolAndDates(symbol, start, end, interval);
 
-        List<OhlcPlusBar> plusBars = bars.stream()
+        return bars.stream()
                 .map(OhlcPlusBar::new)
-                .collect(Collectors.toList());
-        for (OhlcBarEnhanceable enhancer : ohlcBarEnhancers) {
-            plusBars = enhancer.enhance(plusBars);
-        }
-        return plusBars.stream()
                 .sorted((b1, b2) -> {
                     if (b1.getTime().isAfter(b2.getTime())) {
                         return 1;
@@ -53,5 +48,14 @@ public class SymbolEnhancer {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    private List<OhlcPlusBar> findAndEnhanceBars(String symbol, LocalDateTime start, LocalDateTime end, Interval interval) {
+        List<OhlcPlusBar> plusBars = findBars(symbol, start, end, interval);
+        for (OhlcBarEnhanceable enhancer : ohlcBarEnhancers) {
+            plusBars = enhancer.enhance(plusBars);
+        }
+
+        return plusBars;
     }
 }

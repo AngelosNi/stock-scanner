@@ -58,11 +58,9 @@ public class DateTimeUtils {
     public LocalDateTime getLastWorkingHoursDateTime(Interval interval) {
         LocalDateTime now = LocalDateTime.now();
         if (interval == Interval.D1) {
-            if (now.getDayOfWeek() != DayOfWeek.SATURDAY && now.getDayOfWeek() != DayOfWeek.SUNDAY) {
-                return now.toLocalDate().atStartOfDay();
-            }
+            now = now.toLocalDate().atStartOfDay();
         }
-        return subtractIntervalsSkippingOffHours(LocalDateTime.now(), 1, interval);
+        return subtractIntervalsSkippingOffHours(now, 1, interval);
     }
 
     private LocalDateTime add5MinutesSkippingOffHours(LocalDateTime dateTime, int periods) {

@@ -32,7 +32,7 @@ public class StockDataController {
 
         List<String> symbols = tickersRepository.findAll();
 
-        Map<String, List<String>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 10), dateTimeUtils.getNowDayTime().minusHours(7));
+        Map<String, List<String>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 300), dateTimeUtils.getNowDayTime().minusHours(7));
 
         writeToFile(filteredSymbols.get("Bullish"), "bullish");
         writeToFile(filteredSymbols.get("Bearish"), "bearish");

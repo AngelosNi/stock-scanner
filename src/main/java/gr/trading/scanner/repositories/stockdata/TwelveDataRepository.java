@@ -39,10 +39,11 @@ public class TwelveDataRepository implements StockDataRepository<OhlcBar> {
     public List<OhlcBar> findStockDataBySymbolAndDates(String symbol, LocalDateTime start, LocalDateTime end, Interval interval) {
         List<DataEntity> bars;
 
+        // Only cache D1 bars, since for the 5m intervals either way we need to re-fetch in every call
         if (interval == Interval.D1) {
             bars = checkCacheAndFetch(symbol, start, end, interval);
         } else {
-            bars = fetchDataFromTwelveEndpoint(symbol, start, end, interval);
+            bars = fetchDataFromTwelveEndpoint(symbol, dateTimeUtils.subtractDaysSkippingWeekends(end, 10), end, interval);
         }
 
         return bars.stream()
@@ -57,14 +58,18 @@ public class TwelveDataRepository implements StockDataRepository<OhlcBar> {
                     return dbStockDataRepository.findByIdSymbolAndIdBarIntervalAndIdBarDateTimeGreaterThanEqual(symbol, interval, start);
                 }));
 
-        boolean isDataMissing = !bars.stream()
-                .map(e -> e.getId().getBarDateTime())
-                .collect(Collectors.toList())
-                .containsAll(dateTimeUtils.getInBetweenTimes(start, end, interval));
+        // CAUTION: Only checks if the LAST datetime matches. It may be missing the older ones though, if "start" date is changed
+        // If getInBetweenTimes is to be used, it must first exclude ALL non-working days NOT only the weekends
+        boolean isDataMissing = bars.isEmpty() || !bars.get(bars.size() - 1).getId().getBarDateTime().equals(dateTimeUtils.getLastWorkingHoursDateTime(interval));
 
         if (isDataMissing) {
+            List<DataEntity> cachedBars = new ArrayList<>(bars);
             bars = fetchDataFromTwelveEndpoint(symbol, start, end, interval);
-            bars.forEach(s -> {
+            List<DataEntity> fetchedBars = new ArrayList<>(bars);
+
+            // Only save to DB the missing bars
+            fetchedBars.removeAll(cachedBars);
+            fetchedBars.forEach(s -> {
                 dbStockDataRepository.save(s);
                 log.debug("Inserted to DB symbol: {}, interval: {}, action_date: {}", s.getId().getSymbol(), interval.name(), s.getId().getBarDateTime());
             });
