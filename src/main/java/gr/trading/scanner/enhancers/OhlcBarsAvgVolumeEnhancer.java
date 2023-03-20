@@ -66,7 +66,7 @@ public class OhlcBarsAvgVolumeEnhancer implements OhlcBarEnhanceable {
                     .stream()
                     .map(OhlcBar::getVolume)
                     .collect(Collectors.toList());
-            OhlcPlusBar ohlcPlusBar = new OhlcPlusBar((bars.get(i)));
+            OhlcPlusBar ohlcPlusBar = (OhlcPlusBar) bars.get(i).clone();
             ohlcPlusBar.setRaAverageVolume(mathUtils.getAverage(windowedCloses));
             plusBars.add(i, ohlcPlusBar);
         }

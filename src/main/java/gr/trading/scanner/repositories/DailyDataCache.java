@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Component
 public class DailyDataCache {
 
     private Map<String, Map<DataEntity.Id, DataEntity>> dailyDataCache;

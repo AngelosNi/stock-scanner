@@ -1,7 +1,6 @@
 package gr.trading.scanner.services;
 
 import com.google.common.collect.Lists;
-import gr.trading.scanner.model.Interval;
 import gr.trading.scanner.repositories.DailyDataCache;
 import gr.trading.scanner.repositories.stockdata.DbStockDataRepository;
 import lombok.AllArgsConstructor;
@@ -28,9 +27,6 @@ public class ParallelExecutor {
     private DailyDataCache dailyDataCache;
 
     public Map<String, List<String>> findSymbolsByCriteriaParallel(List<String> symbols, LocalDateTime start, LocalDateTime end) throws ExecutionException, InterruptedException {
-        dailyDataCache.initCache(dbStockDataRepository.findBySymbolsAndIntervalAndStartDate(symbols, Interval.D1, start.toLocalDate().atStartOfDay()));
-        log.info("Cache filled");
-
         List<Future<Map<String, List<String>>>> tasks = new ArrayList<>();
         for (List<String> symbolsSubList : Lists.partition(symbols, 10)) {
             tasks.add(symbolHandlerExecutor.findSymbolsByCriteria(symbolsSubList, start, end));

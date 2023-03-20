@@ -59,7 +59,7 @@ public class OhlcBarsAvgCumulativeVolumeEnhancer implements OhlcBarEnhanceable {
     private List<OhlcPlusBar> enhanceWithDaysCumulativeAverageVolume(List<OhlcPlusBar> bars) {
         List<OhlcPlusBar> barsCopy = new ArrayList<>(bars);
         barsCopy.stream()
-                .filter(bar -> bar.getTime().isAfter(dateTimeUtils.subtractDaysSkippingWeekends(dateTimeUtils.getNowDay(), 1)))    // Get today's dailyBars
+                .filter(bar -> bar.getTime().isAfter(dateTimeUtils.getNowDay()))    // Get today's dailyBars
                 .forEach(bar -> bar.setAverageCumulativeVolumeAcrossDays(calculateAvgCumulativeFromPreviousDays(bars, bar)));
 
         return barsCopy;

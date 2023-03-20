@@ -5,7 +5,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class OhlcPlusBar extends OhlcBar {
+public class OhlcPlusBar extends OhlcBar implements Cloneable {
 
     private Double raAverageVolume;
 
@@ -22,5 +22,14 @@ public class OhlcPlusBar extends OhlcBar {
         this.setOpen(ohlcBar.getOpen());
         this.setVolume(ohlcBar.getVolume());
         this.setTime(ohlcBar.getTime());
+    }
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

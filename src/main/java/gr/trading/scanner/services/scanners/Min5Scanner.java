@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,6 +60,14 @@ public class Min5Scanner implements Scanner {
         return constructBars(symbols, start).stream()
                 .filter(min5SymbolData -> {
                     try {
+                        return commonCriteriaApply(min5SymbolData.min5Bars(), min5SymbolData.dailyBars());
+                    } catch (OhlcPlus5MinBarCriteria.NoRecentDataException e) {
+                        log.warn("No recent data was found for 5 min {}", min5SymbolData.name());
+                        return false;
+                    }
+                })
+                .filter(min5SymbolData -> {
+                    try {
                         return bearishCriteriaApply(min5SymbolData.min5Bars(), min5SymbolData.dailyBars());
                     } catch (OhlcPlus5MinBarCriteria.NoRecentDataException e) {
                         log.warn("No recent data was found for 5 min {}", min5SymbolData.name());
@@ -85,7 +94,7 @@ public class Min5Scanner implements Scanner {
 
     private boolean bullishCriteriaApply(List<OhlcPlusBar> min5PlusBars, List<OhlcPlusBar> dailyPlusBars) throws OhlcPlus5MinBarCriteria.NoRecentDataException {
         for (OhlcPlus5MinBarCriteria criteria : bullishCriteria) {
-            if (!criteria.apply(min5PlusBars, dailyPlusBars)) {
+            if (!criteria.apply(dailyPlusBars, min5PlusBars)) {
                 return false;
             }
         }
@@ -94,7 +103,7 @@ public class Min5Scanner implements Scanner {
 
     private boolean bearishCriteriaApply(List<OhlcPlusBar> min5PlusBars, List<OhlcPlusBar> dailyPlusBars) throws OhlcPlus5MinBarCriteria.NoRecentDataException {
         for (OhlcPlus5MinBarCriteria criteria : bearishCriteria) {
-            if (!criteria.apply(min5PlusBars, dailyPlusBars)) {
+            if (!criteria.apply(dailyPlusBars, min5PlusBars)) {
                 return false;
             }
         }
@@ -103,13 +112,80 @@ public class Min5Scanner implements Scanner {
 
     private boolean commonCriteriaApply(List<OhlcPlusBar> plusBars, List<OhlcPlusBar> dailyPlusBars) throws OhlcPlus5MinBarCriteria.NoRecentDataException {
         for (OhlcPlus5MinBarCriteria criteria : commonCriteria) {
-            if (!criteria.apply(plusBars, dailyPlusBars)) {
+            if (!criteria.apply(dailyPlusBars, plusBars)) {
                 return false;
             }
         }
         return true;
     }
 
-    public record Min5SymbolData(String name, List<OhlcPlusBar> dailyBars, List<OhlcPlusBar> min5Bars) {
+    public static final class Min5SymbolData {
+        private final String name;
+        private final List<OhlcPlusBar> dailyBars;
+        private final List<OhlcPlusBar> min5Bars;
+
+        public Min5SymbolData(String name, List<OhlcPlusBar> dailyBars, List<OhlcPlusBar> min5Bars) {
+            this.name = name;
+
+            this.dailyBars = dailyBars.stream()
+                    .sorted((b1, b2) -> {
+                        if (b1.getTime().isAfter(b2.getTime())) {
+                            return 1;
+                        } else if (b1.getTime().isBefore(b2.getTime())) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            this.min5Bars = min5Bars.stream()
+                    .sorted((b1, b2) -> {
+                        if (b1.getTime().isAfter(b2.getTime())) {
+                            return 1;
+                        } else if (b1.getTime().isBefore(b2.getTime())) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    })
+                    .collect(Collectors.toList());;
+        }
+
+        public String name() {
+            return name;
+        }
+
+        public List<OhlcPlusBar> dailyBars() {
+            return dailyBars;
+        }
+
+        public List<OhlcPlusBar> min5Bars() {
+            return min5Bars;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (Min5SymbolData) obj;
+            return Objects.equals(this.name, that.name) &&
+                    Objects.equals(this.dailyBars, that.dailyBars) &&
+                    Objects.equals(this.min5Bars, that.min5Bars);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, dailyBars, min5Bars);
+        }
+
+        @Override
+        public String toString() {
+            return "Min5SymbolData[" +
+                    "name=" + name + ", " +
+                    "dailyBars=" + dailyBars + ", " +
+                    "min5Bars=" + min5Bars + ']';
+        }
+
     }
 }
