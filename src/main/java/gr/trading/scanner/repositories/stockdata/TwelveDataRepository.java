@@ -43,7 +43,7 @@ public class TwelveDataRepository implements StockDataRepository<OhlcBar> {
         if (interval == Interval.D1) {
             bars = checkCacheAndFetch(symbol, start, end, interval);
         } else {
-            bars = fetchDataFromTwelveEndpoint(symbol, dateTimeUtils.subtractDaysSkippingWeekends(end, 10), end, interval);
+            bars = fetchDataFromTwelveEndpoint(symbol, dateTimeUtils.subtractDaysSkippingWeekends(end, 10), end.plusDays(1), interval);
         }
 
         return bars.stream()

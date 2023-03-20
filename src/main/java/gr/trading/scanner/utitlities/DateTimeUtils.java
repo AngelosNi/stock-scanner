@@ -4,10 +4,7 @@ import gr.trading.scanner.model.Interval;
 import org.springframework.stereotype.Component;
 
 import java.security.InvalidParameterException;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +12,16 @@ import java.util.List;
 public class DateTimeUtils {
 
     public LocalDateTime getNowDay() {
-        return LocalDate.now().atStartOfDay();
+        return LocalDateTime.now().atZone(ZoneId.of("Europe/Athens"))
+                .withZoneSameInstant(ZoneId.of("America/New_York"))
+                .toLocalDate()
+                .atStartOfDay();
     }
 
     public LocalDateTime getNowDayTime() {
-        return LocalDateTime.now();
+        return LocalDateTime.now().atZone(ZoneId.of("Europe/Athens"))
+                .withZoneSameInstant(ZoneId.of("America/New_York"))
+                .toLocalDateTime();
     }
 
     public List<LocalDateTime> getInBetweenTimes(LocalDateTime start, LocalDateTime end, Interval interval) {
@@ -56,7 +58,7 @@ public class DateTimeUtils {
     }
 
     public LocalDateTime getLastWorkingHoursDateTime(Interval interval) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = getNowDayTime();
         if (interval == Interval.D1) {
             now = now.toLocalDate().atStartOfDay();
         }

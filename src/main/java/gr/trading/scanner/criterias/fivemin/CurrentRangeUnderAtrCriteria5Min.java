@@ -22,9 +22,9 @@ public class CurrentRangeUnderAtrCriteria5Min implements OhlcPlus5MinBarCriteria
     @Override
     public boolean apply(List<OhlcPlusBar> d1Bars, List<OhlcPlusBar> min5Bars) throws NoRecentDataException {
         // Recent data are considered those in the last 10 minutes
-        if (min5Bars.get(min5Bars.size() - 1).getTime().isBefore(dateTimeUtils.getNowDayTime().minusMinutes(10))) {
-            throw new NoRecentDataException("No recent data available");
-        }
+//        if (min5Bars.get(min5Bars.size() - 1).getTime().isBefore(dateTimeUtils.getNowDayTime().minusMinutes(10))) {
+//            throw new NoRecentDataException("No recent data available");
+//        }
         double currentRange = abs(getCloseOfPreviousDay(d1Bars) - min5Bars.get(min5Bars.size() - 1).getClose());
 
         return currentRange < taTools.calculateAtr(d1Bars);
