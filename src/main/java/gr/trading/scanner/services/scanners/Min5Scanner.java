@@ -35,6 +35,7 @@ public class Min5Scanner implements Scanner {
     @Override
     public List<String> filterBullish(List<String> symbols, LocalDateTime start) {
         return constructBars(symbols, start).stream()
+                .filter(data -> !data.dailyBars().isEmpty() && !data.min5Bars().isEmpty())
                 .filter(min5SymbolData -> {
                     try {
                         return commonCriteriaApply(min5SymbolData.min5Bars(), min5SymbolData.dailyBars());
@@ -58,6 +59,7 @@ public class Min5Scanner implements Scanner {
     @Override
     public List<String> filterBearish(List<String> symbols, LocalDateTime start) {
         return constructBars(symbols, start).stream()
+                .filter(data -> !data.dailyBars().isEmpty() && !data.min5Bars().isEmpty())
                 .filter(min5SymbolData -> {
                     try {
                         return commonCriteriaApply(min5SymbolData.min5Bars(), min5SymbolData.dailyBars());

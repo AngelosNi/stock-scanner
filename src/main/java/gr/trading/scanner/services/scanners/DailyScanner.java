@@ -34,6 +34,7 @@ public class DailyScanner implements Scanner {
     @Override
     public List<String> filterBullish(List<String> symbols, LocalDateTime start) {
         return constructBars(symbols, start).stream()
+                .filter(data -> !data.dailyBars().isEmpty())
                 .filter(dailySymbolData -> commonCriteriaApply(dailySymbolData.dailyBars()))
                 .filter(dailySymbolData -> bullishCriteriaApply(dailySymbolData.dailyBars()))
                 .map(DailySymbolData::name)
@@ -43,6 +44,7 @@ public class DailyScanner implements Scanner {
     @Override
     public List<String> filterBearish(List<String> symbols, LocalDateTime start) {
         return constructBars(symbols, start).stream()
+                .filter(data -> !data.dailyBars().isEmpty())
                 .filter(dailySymbolData -> commonCriteriaApply(dailySymbolData.dailyBars()))
                 .filter(dailySymbolData -> bearishCriteriaApply(dailySymbolData.dailyBars()))
                 .map(DailySymbolData::name)

@@ -54,7 +54,7 @@ public class TwelveDataRepository implements StockDataRepository<OhlcBar> {
     private List<DataEntity> checkCacheAndFetch(String symbol, LocalDateTime start, LocalDateTime end, Interval interval) {
         List<DataEntity> bars = new ArrayList<>(dailyDataCache.getSymbolDataEntities(symbol, interval, start)
                 .orElseGet(() -> {
-                    log.info("Cache miss on {} and interval {}", symbol, interval);
+                    log.debug("Cache miss on {} and interval {}", symbol, interval);
                     return dbStockDataRepository.findByIdSymbolAndIdBarIntervalAndIdBarDateTimeGreaterThanEqual(symbol, interval, start);
                 }));
 

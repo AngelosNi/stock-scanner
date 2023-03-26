@@ -21,12 +21,12 @@ public class RvolFactorCriteria5Min implements OhlcPlus5MinBarCriteria {
     @Override
     public boolean apply(List<OhlcPlusBar> d1Bars, List<OhlcPlusBar> min5Bars) throws NoRecentDataException {
         // Recent data are considered those in the last 10 minutes
-//        if (min5Bars.get(min5Bars.size() - 1).getTime().isBefore(dateTimeUtils.getNowDayTime().minusMinutes(10))) {
-//            throw new NoRecentDataException("No recent data available");
-//        }
-        if (min5Bars.get(min5Bars.size() - 1).getAverageCumulativeVolumeAcrossDays() == null) {
-            log.info("ds");
+        if (min5Bars.get(min5Bars.size() - 1).getTime().isBefore(dateTimeUtils.getNowDayTime().minusMinutes(30))) {
+            throw new NoRecentDataException("No recent data available");
         }
-        return min5Bars.get(min5Bars.size() - 1).getCumulativeVolume().compareTo(min5Bars.get(min5Bars.size() - 1).getAverageCumulativeVolumeAcrossDays().multiply(BigDecimal.valueOf(1.5))) > 0;
+        if (min5Bars.get(min5Bars.size() - 1).getAverageCumulativeVolumeAcrossDays() == null) {
+            log.warn("AverageCumulativeVolumeAcrossDays was null");
+        }
+        return min5Bars.get(min5Bars.size() - 1).getCumulativeVolume().compareTo(min5Bars.get(min5Bars.size() - 1).getAverageCumulativeVolumeAcrossDays().multiply(BigDecimal.valueOf(1))) > 0;
     }
 }
