@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +49,7 @@ public class OhlcBarsAvgCumulativeVolumeEnhancer implements OhlcBarEnhanceable {
         // Init 1st element
         orderedBars.get(0).setCumulativeVolume(orderedBars.get(0).getVolume());
         for (int i = 1; i < bars.size(); i++) {
-            orderedBars.get(i).setCumulativeVolume(orderedBars.get(i - 1).getCumulativeVolume().add(orderedBars.get(i).getVolume()));
+            orderedBars.get(i).setCumulativeVolume(orderedBars.get(i - 1).getCumulativeVolume() + orderedBars.get(i).getVolume());
         }
 
         return orderedBars;
@@ -65,14 +64,14 @@ public class OhlcBarsAvgCumulativeVolumeEnhancer implements OhlcBarEnhanceable {
         return barsCopy;
     }
 
-    private BigDecimal calculateAvgCumulativeFromPreviousDays(List<OhlcPlusBar> bars, OhlcBar forBar) {
-        return BigDecimal.valueOf(bars.stream()
+    private Double calculateAvgCumulativeFromPreviousDays(List<OhlcPlusBar> bars, OhlcBar forBar) {
+        return bars.stream()
                 .filter(bar -> bar.getTime().isAfter(dateTimeUtils.subtractDaysSkippingWeekends(dateTimeUtils.getNowDay(), DAYS_TO_INCLUDE_FOR_5_MIN_AVG))) // Only include N previous days for average calculations
                 .filter(bar -> bar.getTime().toLocalTime().equals(forBar.getTime().toLocalTime()))      // Only include the specific time of "forBar" from the days included
                 .map(OhlcPlusBar::getCumulativeVolume)
-                .mapToDouble(BigDecimal::doubleValue)
+                .mapToDouble(Double::doubleValue)
                 .average()
-                .orElseThrow());
+                .orElseThrow();
     }
 
     private Map<LocalDate, List<OhlcPlusBar>> splitByDays(List<OhlcPlusBar> bars) {

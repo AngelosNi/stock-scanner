@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -17,13 +16,13 @@ public class OhlcBar implements Serializable {
 
     private LocalDateTime time;
 
-    private double open;
+    private Double open;
 
-    private double high;
+    private Double high;
 
-    private double low;
+    private Double low;
 
-    private double close;
+    private Double close;
 
-    private BigDecimal volume;
+    private Double volume;
 }

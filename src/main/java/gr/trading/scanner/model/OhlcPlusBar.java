@@ -2,8 +2,6 @@ package gr.trading.scanner.model;
 
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 @Data
 public class OhlcPlusBar extends OhlcBar implements Cloneable {
 
@@ -11,9 +9,9 @@ public class OhlcPlusBar extends OhlcBar implements Cloneable {
 
     private Double averageVolumeAcrossDays;
 
-    private BigDecimal cumulativeVolume;
+    private Double cumulativeVolume;
 
-    private BigDecimal averageCumulativeVolumeAcrossDays;
+    private Double averageCumulativeVolumeAcrossDays;
 
     public OhlcPlusBar(OhlcBar ohlcBar) {
         this.setClose(ohlcBar.getClose());

@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Component
@@ -27,6 +26,6 @@ public class RvolFactorCriteria5Min implements OhlcPlus5MinBarCriteria {
         if (min5Bars.get(min5Bars.size() - 1).getAverageCumulativeVolumeAcrossDays() == null) {
             log.warn("AverageCumulativeVolumeAcrossDays was null");
         }
-        return min5Bars.get(min5Bars.size() - 1).getCumulativeVolume().compareTo(min5Bars.get(min5Bars.size() - 1).getAverageCumulativeVolumeAcrossDays().multiply(BigDecimal.valueOf(1))) > 0;
+        return min5Bars.get(min5Bars.size() - 1).getCumulativeVolume().compareTo(min5Bars.get(min5Bars.size() - 1).getAverageCumulativeVolumeAcrossDays() * 1) > 0;
     }
 }

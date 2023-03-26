@@ -62,7 +62,7 @@ public class OhlcBarsAvgVolumeEnhancer implements OhlcBarEnhanceable {
     private List<OhlcPlusBar> enhanceWithRaVolume(List<OhlcPlusBar> bars) {
         List<OhlcPlusBar> plusBars = new ArrayList<>();
         for (int i = 0; i < bars.size(); i++) {
-            List<BigDecimal> windowedCloses = bars.subList(max(0, i - WINDOW_SIZE_5_MIN_ROLL_AVG / 2), min(i + WINDOW_SIZE_5_MIN_ROLL_AVG / 2, bars.size()))
+            List<Double> windowedCloses = bars.subList(max(0, i - WINDOW_SIZE_5_MIN_ROLL_AVG / 2), min(i + WINDOW_SIZE_5_MIN_ROLL_AVG / 2, bars.size()))
                     .stream()
                     .map(OhlcBar::getVolume)
                     .collect(Collectors.toList());

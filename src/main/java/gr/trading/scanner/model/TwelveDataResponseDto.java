@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +24,14 @@ public class TwelveDataResponseDto {
         @JsonProperty("datetime")
         private String dateTime;
 
-        private BigDecimal open;
+        private Double open;
 
-        private BigDecimal high;
+        private Double high;
 
-        private BigDecimal low;
+        private Double low;
 
-        private BigDecimal close;
+        private Double close;
 
-        private BigDecimal volume;
+        private Double volume;
     }
 }

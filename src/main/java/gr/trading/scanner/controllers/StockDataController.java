@@ -1,5 +1,6 @@
 package gr.trading.scanner.controllers;
 
+import gr.trading.scanner.model.Interval;
 import gr.trading.scanner.repositories.tickers.TickersRepository;
 import gr.trading.scanner.services.ParallelExecutor;
 import gr.trading.scanner.utitlities.DateTimeUtils;
@@ -26,13 +27,30 @@ public class StockDataController {
 
     private final TickersRepository tickersRepository;
 
-    @GetMapping("/stock")
+    @GetMapping("/stocks/5min")
     public Map<String, List<String>> getSymbols() throws ExecutionException, InterruptedException, IOException {
         long startTime = System.nanoTime();
 
         List<String> symbols = tickersRepository.findAll();
 
-        Map<String, List<String>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 300), dateTimeUtils.getNowDayTime().minusHours(7));
+        Map<String, List<String>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 300), dateTimeUtils.getNowDayTime().minusHours(7), Interval.M5);
+
+        writeToFile(filteredSymbols.get("Bullish"), "bullish");
+        writeToFile(filteredSymbols.get("Bearish"), "bearish");
+
+        long elapsedTime = System.nanoTime() - startTime;
+        log.info("Time elapsed (ms): {}", elapsedTime / 1000000);
+
+        return filteredSymbols;
+    }
+
+    @GetMapping("/stocks/daily")
+    public Map<String, List<String>> getDailySymbols() throws ExecutionException, InterruptedException, IOException {
+        long startTime = System.nanoTime();
+
+        List<String> symbols = tickersRepository.findAll();
+
+        Map<String, List<String>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 300), dateTimeUtils.getNowDayTime().minusHours(7), Interval.D1);
 
         writeToFile(filteredSymbols.get("Bullish"), "bullish");
         writeToFile(filteredSymbols.get("Bearish"), "bearish");

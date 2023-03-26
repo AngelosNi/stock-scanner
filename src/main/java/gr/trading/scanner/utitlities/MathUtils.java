@@ -9,8 +9,8 @@ import java.util.List;
 @Component
 public class MathUtils {
 
-    public double getAverage(List<BigDecimal> points) {
-        return StatUtils.mean(points.stream().mapToDouble(BigDecimal::doubleValue).toArray());
+    public double getAverage(List<Double> points) {
+        return StatUtils.mean(points.stream().mapToDouble(Double::doubleValue).toArray());
     }
 
     public double getAverageFromDoubles(List<Double> points) {

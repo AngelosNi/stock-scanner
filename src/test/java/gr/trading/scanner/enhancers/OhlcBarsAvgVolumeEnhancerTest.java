@@ -7,7 +7,6 @@ import gr.trading.scanner.utitlities.MathUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -32,12 +31,12 @@ class OhlcBarsAvgVolumeEnhancerTest {
         double initHigh = 78.12;
         double initLow = 49.456;
         double initOpen = 68.1233;
-        BigDecimal volume = new BigDecimal("5000.2");
+        double volume = 5000.2;
 
         LocalDateTime now = start;
         for (int day = 0; day < DAYS; day++) {
             for (int bar = 0; bar < MIN_5_BARS; bar++) {
-                volume = volume.add(BigDecimal.ONE);
+                volume = volume + 1;
                 testBars.add(OhlcPlusBar.builder().close(initClose++)
                         .high(initHigh++)
                         .low(initLow++)

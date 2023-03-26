@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,7 +29,7 @@ public class DataEntity {
 
     private double lowPrice;
 
-    private BigDecimal volume;
+    private double volume;
 
     @Embeddable
     @AllArgsConstructor
