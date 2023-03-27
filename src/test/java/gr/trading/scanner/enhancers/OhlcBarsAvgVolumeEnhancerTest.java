@@ -55,7 +55,7 @@ class OhlcBarsAvgVolumeEnhancerTest {
         List<OhlcPlusBar> plusBars = testBars.stream()
                 .map(OhlcPlusBar::new)
                 .collect(Collectors.toList());
-        enhancer.enhance(plusBars);
+        enhancer.enhance5Mins(plusBars);
     }
 
 }

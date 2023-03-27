@@ -7,7 +7,6 @@ import gr.trading.scanner.utitlities.MathUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +30,12 @@ public class OhlcBarsAvgVolumeEnhancer implements OhlcBarEnhanceable {
     private final DateTimeUtils dateTimeUtils;
 
     @Override
-    public List<OhlcPlusBar> enhance(List<OhlcPlusBar> bars) {
+    public List<OhlcPlusBar> enhanceDailies(List<OhlcPlusBar> bars) {
+        return enhanceWithDaysAverageVolume(enhanceWithRaVolume(bars));
+    }
+
+    @Override
+    public List<OhlcPlusBar> enhance5Mins(List<OhlcPlusBar> bars) {
         List<OhlcPlusBar> raEnhancedBars = splitByDays(bars).values().stream()
                 .map(this::enhanceWithRaVolume)
                 .flatMap(Collection::stream)

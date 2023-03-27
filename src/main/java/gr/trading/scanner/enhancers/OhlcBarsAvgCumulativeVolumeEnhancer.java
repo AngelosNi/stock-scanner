@@ -24,7 +24,12 @@ public class OhlcBarsAvgCumulativeVolumeEnhancer implements OhlcBarEnhanceable {
     private final DateTimeUtils dateTimeUtils;
 
     @Override
-    public List<OhlcPlusBar> enhance(List<OhlcPlusBar> bars) {
+    public List<OhlcPlusBar> enhanceDailies(List<OhlcPlusBar> bars) {
+        return bars;
+    }
+
+    @Override
+    public List<OhlcPlusBar> enhance5Mins(List<OhlcPlusBar> bars) {
         List<OhlcPlusBar> cVolEnhancedBars = splitByDays(bars).values().stream()
                 .map(this::enhanceWithCVol)
                 .flatMap(Collection::stream)

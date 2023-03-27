@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -50,7 +51,7 @@ public class StockDataController {
 
         List<String> symbols = tickersRepository.findAll();
 
-        Map<String, List<String>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 300), dateTimeUtils.getNowDayTime().minusHours(7), Interval.D1);
+        Map<String, List<String>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 300), LocalDateTime.now(), Interval.D1);
 
         writeToFile(filteredSymbols.get("Bullish"), "bullish");
         writeToFile(filteredSymbols.get("Bearish"), "bearish");

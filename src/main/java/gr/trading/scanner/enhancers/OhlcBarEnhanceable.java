@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface OhlcBarEnhanceable {
 
-    List<OhlcPlusBar> enhance(List<OhlcPlusBar> bar);
+    List<OhlcPlusBar> enhanceDailies(List<OhlcPlusBar> bars);
+
+    List<OhlcPlusBar> enhance5Mins(List<OhlcPlusBar> bar);
 }
