@@ -53,7 +53,7 @@ public class DailyScanner implements Scanner {
 
     private List<DailySymbolData> constructBars(List<String> symbols, LocalDateTime start) {
         return symbols.stream()
-                .map(sym -> new DailySymbolData(sym, symbolEnhancer.findDailyBars(sym, start, dateTimeUtils.getNowDay())))
+                .map(sym -> new DailySymbolData(sym, symbolEnhancer.findDailyBars(sym, start, dateTimeUtils.getNowDayAtSessionStart())))
                 .filter(dailySymbolData -> {
                     if (dailySymbolData.dailyBars().isEmpty()) {
                         log.warn("{} is empty", dailySymbolData);

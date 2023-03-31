@@ -2,8 +2,6 @@ package gr.trading.scanner.services;
 
 import com.google.common.collect.Lists;
 import gr.trading.scanner.model.Interval;
-import gr.trading.scanner.repositories.DailyDataCache;
-import gr.trading.scanner.repositories.stockdata.DbStockDataRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,14 +21,10 @@ public class ParallelExecutor {
 
     private final SymbolHandlerExecutor symbolHandlerExecutor;
 
-    private DbStockDataRepository dbStockDataRepository;
-
-    private DailyDataCache dailyDataCache;
-
-    public Map<String, List<String>> findSymbolsByCriteriaParallel(List<String> symbols, LocalDateTime start, LocalDateTime end, Interval interval) throws ExecutionException, InterruptedException {
+    public Map<String, List<String>> findSymbolsByCriteriaParallel(List<String> symbols, LocalDateTime start, Interval interval) throws ExecutionException, InterruptedException {
         List<Future<Map<String, List<String>>>> tasks = new ArrayList<>();
         for (List<String> symbolsSubList : Lists.partition(symbols, 10)) {
-            tasks.add(symbolHandlerExecutor.findSymbolsByCriteria(symbolsSubList, start, end, interval));
+            tasks.add(symbolHandlerExecutor.findSymbolsByCriteria(symbolsSubList, start, interval));
         }
 
         List<Map<String, List<String>>> bars = new ArrayList<>();

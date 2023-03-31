@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -21,6 +19,10 @@ import java.util.concurrent.ExecutionException;
 @AllArgsConstructor
 @Slf4j
 public class StockDataController {
+
+    public static final int LOOK_BACK_DAYS_FOR_DAILY = 300;
+
+    public static final int LOOK_BACK_DAYS_FOR_5_MINS = 10;
 
     private final ParallelExecutor parallelExecutor;
 
@@ -34,7 +36,7 @@ public class StockDataController {
 
         List<String> symbols = tickersRepository.findAll();
 
-        Map<String, List<String>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 300), dateTimeUtils.getNowDayTime().minusHours(7), Interval.M5);
+        Map<String, List<String>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(dateTimeUtils.getNowDayAtSessionStart(), LOOK_BACK_DAYS_FOR_5_MINS), Interval.M5);
 
         writeToFile(filteredSymbols.get("Bullish"), "bullish");
         writeToFile(filteredSymbols.get("Bearish"), "bearish");
@@ -51,7 +53,7 @@ public class StockDataController {
 
         List<String> symbols = tickersRepository.findAll();
 
-        Map<String, List<String>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 300), LocalDateTime.now(), Interval.D1);
+        Map<String, List<String>> filteredSymbols = parallelExecutor.findSymbolsByCriteriaParallel(symbols, dateTimeUtils.subtractDaysSkippingWeekends(dateTimeUtils.getNowDayAtSessionStart(), LOOK_BACK_DAYS_FOR_DAILY), Interval.D1);
 
         writeToFile(filteredSymbols.get("Bullish"), "bullish");
         writeToFile(filteredSymbols.get("Bearish"), "bearish");

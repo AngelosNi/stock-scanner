@@ -1,5 +1,6 @@
-package gr.trading.scanner.criterias.fivemin;
+package gr.trading.scanner.criterias.fivemin.common;
 
+import gr.trading.scanner.criterias.fivemin.OhlcPlus5MinBarCriteria;
 import gr.trading.scanner.model.OhlcPlusBar;
 import gr.trading.scanner.ta.TaTools;
 import gr.trading.scanner.utitlities.DateTimeUtils;
@@ -33,7 +34,7 @@ public class CurrentRangeUnderAtrCriteria5Min implements OhlcPlus5MinBarCriteria
 
     public double getCloseOfPreviousDay(List<OhlcPlusBar> d1Bars) {
         return d1Bars.stream()
-                .filter(bar -> bar.getTime().equals(dateTimeUtils.subtractDaysSkippingWeekends(dateTimeUtils.getNowDay(), 1)))
+                .filter(bar -> bar.getTime().equals(dateTimeUtils.subtractDaysSkippingWeekends(dateTimeUtils.getNowDayAtSessionStart(), 1)))
                 .findFirst()
                 .get()
                 .getClose();

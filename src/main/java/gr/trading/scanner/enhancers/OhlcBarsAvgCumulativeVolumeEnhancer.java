@@ -63,7 +63,7 @@ public class OhlcBarsAvgCumulativeVolumeEnhancer implements OhlcBarEnhanceable {
     private List<OhlcPlusBar> enhanceWithDaysCumulativeAverageVolume(List<OhlcPlusBar> bars) {
         List<OhlcPlusBar> barsCopy = new ArrayList<>(bars);
         barsCopy.stream()
-                .filter(bar -> bar.getTime().isAfter(dateTimeUtils.getNowDay()))    // Get today's dailyBars
+                .filter(bar -> bar.getTime().isAfter(dateTimeUtils.getNowDayAtSessionStart()))    // Get today's dailyBars
                 .forEach(bar -> bar.setAverageCumulativeVolumeAcrossDays(calculateAvgCumulativeFromPreviousDays(bars, bar)));
 
         return barsCopy;
@@ -71,7 +71,7 @@ public class OhlcBarsAvgCumulativeVolumeEnhancer implements OhlcBarEnhanceable {
 
     private Double calculateAvgCumulativeFromPreviousDays(List<OhlcPlusBar> bars, OhlcBar forBar) {
         return bars.stream()
-                .filter(bar -> bar.getTime().isAfter(dateTimeUtils.subtractDaysSkippingWeekends(dateTimeUtils.getNowDay(), DAYS_TO_INCLUDE_FOR_5_MIN_AVG))) // Only include N previous days for average calculations
+                .filter(bar -> bar.getTime().isAfter(dateTimeUtils.subtractDaysSkippingWeekends(dateTimeUtils.getNowDayAtSessionStart(), DAYS_TO_INCLUDE_FOR_5_MIN_AVG))) // Only include N previous days for average calculations
                 .filter(bar -> bar.getTime().toLocalTime().equals(forBar.getTime().toLocalTime()))      // Only include the specific time of "forBar" from the days included
                 .map(OhlcPlusBar::getCumulativeVolume)
                 .mapToDouble(Double::doubleValue)

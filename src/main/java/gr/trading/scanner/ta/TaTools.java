@@ -1,6 +1,8 @@
 package gr.trading.scanner.ta;
 
 import gr.trading.scanner.model.OhlcBar;
+import gr.trading.scanner.utitlities.DateTimeUtils;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeriesBuilder;
@@ -11,11 +13,15 @@ import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
+@AllArgsConstructor
 public class TaTools {
 
-    public static final int ATR_LENGTH = 10;
+    private static final int ATR_LENGTH = 10;
+
+    private final DateTimeUtils dateTimeUtils;
 
     public <T extends OhlcBar> double calculateAtr(List<T> bars) {
         BarSeries series = convertToBarSeries(bars);
@@ -29,7 +35,21 @@ public class TaTools {
         return new SMAIndicator(new ClosePriceIndicator(series), period).getValue(series.getEndIndex()).doubleValue();
     }
 
-    public  <T extends OhlcBar> List<T> convertToHeikinAshi(List<T> ohlcBars) {
+    public <T extends OhlcBar> double calculateVwap(List<T> bars) {
+        double num = 0;
+        double denom = 0;
+
+        List<T> lastDayBars = bars.stream()
+                .filter(b -> b.getTime().toLocalDate().isEqual(dateTimeUtils.getNowDayAtSessionStart().toLocalDate()))
+                .collect(Collectors.toList());
+        for (T bar : lastDayBars) {
+            num += (bar.getHigh() + bar.getLow() + bar.getClose()) / 3 * bar.getVolume();
+            denom += bar.getVolume();
+        }
+        return num / denom;
+    }
+
+    public <T extends OhlcBar> List<T> convertToHeikinAshi(List<T> ohlcBars) {
         List<T> haBars = new ArrayList<>();
         T haBar = (T) new OhlcBar();
         double haOpen = (ohlcBars.get(0).getOpen() + ohlcBars.get(0).getClose()) / 2;

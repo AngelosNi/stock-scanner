@@ -2,16 +2,17 @@ package gr.trading.scanner.criterias.daily.common;
 
 import gr.trading.scanner.criterias.daily.OhlcPlusDailyBarCriteria;
 import gr.trading.scanner.model.OhlcPlusBar;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
-//@Qualifier("CommonCriteria")
+@Qualifier("CommonCriteria")
 public class DailyVolumeCriteria implements OhlcPlusDailyBarCriteria {
 
-    private final double HEAVY_VOLUME_MULTIPLIER_THRESHOLD = 0.8;
+    private final double HEAVY_VOLUME_MULTIPLIER_THRESHOLD = 1;
 
     @Override
     public boolean apply(List<OhlcPlusBar> d1Bars) {

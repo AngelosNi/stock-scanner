@@ -1,5 +1,6 @@
-package gr.trading.scanner.criterias.fivemin;
+package gr.trading.scanner.criterias.fivemin.common;
 
+import gr.trading.scanner.criterias.fivemin.OhlcPlus5MinBarCriteria;
 import gr.trading.scanner.model.OhlcPlusBar;
 import gr.trading.scanner.utitlities.DateTimeUtils;
 import lombok.AllArgsConstructor;

@@ -14,7 +14,7 @@ import static java.lang.Math.max;
 @AllArgsConstructor
 public class HADailyBarsTrendingCriteria implements OhlcPlusDailyBarCriteria {
 
-    private static final int LOOK_BEHIND_PERIOD = 3;
+    private static final int LOOK_BEHIND_PERIOD = 2;
 
     private final TaTools taTools;
 

@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 public class DateTimeUtils {
 
-    public LocalDateTime getNowDay() {
+    public LocalDateTime getNowDayAtSessionStart() {
         return LocalDateTime.now().atZone(ZoneId.of("Europe/Athens"))
                 .withZoneSameInstant(ZoneId.of("America/New_York"))
                 .toLocalDate()

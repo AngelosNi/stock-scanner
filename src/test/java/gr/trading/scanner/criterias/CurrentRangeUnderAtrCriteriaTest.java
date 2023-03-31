@@ -1,6 +1,6 @@
 package gr.trading.scanner.criterias;
 
-import gr.trading.scanner.criterias.fivemin.CurrentRangeUnderAtrCriteria5Min;
+import gr.trading.scanner.criterias.fivemin.common.CurrentRangeUnderAtrCriteria5Min;
 import gr.trading.scanner.criterias.fivemin.OhlcPlus5MinBarCriteria;
 import gr.trading.scanner.model.OhlcBar;
 import gr.trading.scanner.model.OhlcPlusBar;
