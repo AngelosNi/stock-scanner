@@ -12,13 +12,14 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.concurrent.Executor;
 
 @Configuration
 @EnableAsync
 @Slf4j
 public class AppConfig {
+
+    private static final int MAX_DAYS_TO_CACHE = 300;
 
     @Bean
     public Executor taskExecutor() {
@@ -34,7 +35,7 @@ public class AppConfig {
         log.info("Initializing Cache");
 
         DailyDataCache cache = new DailyDataCache();
-        cache.initCache(dbStockDataRepository.findBySymbolsAndIntervalAndStartDate(tickersRepository.findAll(), Interval.D1, dateTimeUtils.subtractDaysSkippingWeekends(LocalDate.now().atTime(9, 30), 300).toLocalDate().atStartOfDay()));
+        cache.initCache(dbStockDataRepository.findBySymbolsAndIntervalAndStartDate(tickersRepository.findAll(), Interval.D1, dateTimeUtils.subtractDaysSkippingWeekends(dateTimeUtils.getNowDayAtSessionStart(), MAX_DAYS_TO_CACHE)));
 
         log.info("Cache initialized and filled");
         return cache;
