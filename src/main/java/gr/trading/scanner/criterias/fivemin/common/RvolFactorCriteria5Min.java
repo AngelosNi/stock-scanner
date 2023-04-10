@@ -27,6 +27,6 @@ public class RvolFactorCriteria5Min implements OhlcPlus5MinBarCriteria {
         if (min5Bars.get(min5Bars.size() - 1).getAverageCumulativeVolumeAcrossDays() == null) {
             log.warn("AverageCumulativeVolumeAcrossDays was null");
         }
-        return min5Bars.get(min5Bars.size() - 1).getCumulativeVolume().compareTo(min5Bars.get(min5Bars.size() - 1).getAverageCumulativeVolumeAcrossDays() * 1) > 0;
+        return min5Bars.get(min5Bars.size() - 1).getCumulativeVolume().compareTo(min5Bars.get(min5Bars.size() - 1).getAverageCumulativeVolumeAcrossDays() * 0.8) > 0;
     }
 }

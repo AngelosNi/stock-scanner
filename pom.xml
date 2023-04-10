@@ -20,6 +20,7 @@
 		<ta4j-core.version>0.15</ta4j-core.version>
 		<guava.version>31.1-jre</guava.version>
 		<mssql-jdbc.version>12.2.0.jre11</mssql-jdbc.version>
+		<YahooFinanceAPI.version>3.17.0</YahooFinanceAPI.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -36,6 +37,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>com.yahoofinance-api</groupId>
+			<artifactId>YahooFinanceAPI</artifactId>
+			<version>${YahooFinanceAPI.version}</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>

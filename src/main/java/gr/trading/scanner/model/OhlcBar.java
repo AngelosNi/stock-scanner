@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class OhlcBar implements Serializable {
 
+    private String symbol;
+
     private LocalDateTime time;
 
     private Double open;

@@ -12,6 +12,7 @@ public class StockDataEntityToOhlcBarMapper {
     public OhlcBar map(DataEntity dataEntity) {
         OhlcBar ohlcBar = new OhlcBar();
 
+        ohlcBar.setSymbol(dataEntity.getId().getSymbol());
         ohlcBar.setClose(dataEntity.getClosePrice());
         ohlcBar.setHigh(dataEntity.getHighPrice());
         ohlcBar.setOpen(dataEntity.getOpenPrice());
