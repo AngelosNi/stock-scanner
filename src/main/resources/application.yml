@@ -22,3 +22,6 @@ spring:
 twelve-data:
   base-url: https://api.twelvedata.com
   request-rate: 2.4 # Per second
+
+y-finance:
+  request-rate: 2 # Per second

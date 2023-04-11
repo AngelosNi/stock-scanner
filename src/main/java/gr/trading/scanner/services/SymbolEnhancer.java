@@ -6,6 +6,7 @@ import gr.trading.scanner.model.OhlcBar;
 import gr.trading.scanner.model.OhlcPlusBar;
 import gr.trading.scanner.repositories.stockdata.StockDataRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public class SymbolEnhancer {
 
     private List<OhlcBarEnhanceable> ohlcBarEnhancers;
 
-    public SymbolEnhancer(StockDataRepository<OhlcBar> repository,
+    public SymbolEnhancer(@Qualifier("compositeStockDataRepository") StockDataRepository<OhlcBar> repository,
                           List<OhlcBarEnhanceable> ohlcBarEnhancers) {
         this.repository = repository;
         this.ohlcBarEnhancers = ohlcBarEnhancers;

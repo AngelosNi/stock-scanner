@@ -16,12 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Component("compositeStockDataRepository")
 @AllArgsConstructor
 @Slf4j
 public class CompositeStockDataRepository implements StockDataRepository {
 
-    @Qualifier("twelveDataRepository")
+    @Qualifier("yfinanceDataRepository")
     private final StockDataRepository<OhlcBar> stockDataRepository;
 
     private final StockDataEntityToOhlcBarMapper stockDataEntityToOhlcBarMapper;

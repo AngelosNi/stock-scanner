@@ -20,7 +20,7 @@
 		<ta4j-core.version>0.15</ta4j-core.version>
 		<guava.version>31.1-jre</guava.version>
 		<mssql-jdbc.version>12.2.0.jre11</mssql-jdbc.version>
-		<YahooFinanceAPI.version>3.17.0</YahooFinanceAPI.version>
+		<YahooFinanceAPI.version>3.18.0-SNAPSHOT</YahooFinanceAPI.version>
 	</properties>
 	<dependencies>
 		<dependency>
